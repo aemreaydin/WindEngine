@@ -10,7 +10,7 @@ class Window
 {
     SDL_Window* _window{ nullptr };
 
-  public:
+public:
     [[nodiscard]] auto Initialize() -> bool;
     static void PollEvents( bool& isRunning );
     void Shutdown();

@@ -1,8 +1,33 @@
-#include <engine/engine.hpp>
+#include <engine/main.hpp>
 
-auto main() -> int
+using namespace WindEngine;
+
+class WindEditorApp : public App
 {
-    WindEngine::Engine engine{};
-    engine.Run();
-    return 0;
+public:
+    auto Initialize() -> bool override
+    {
+        WIND_DEBUG( "WindEditorApp::Initialize." )
+        return false;
+    }
+
+    void Shutdown() override
+    {
+        WIND_DEBUG( "WindEditorApp::Shutdown." )
+    }
+
+    void Update() override
+    {
+        WIND_TRACE( "WindEditorApp::Update." )
+    }
+
+    void Render() override
+    {
+        WIND_TRACE( "WindEditorApp::Render." )
+    }
+};
+
+auto CreateApp() -> std::unique_ptr<WindEngine::App>
+{
+    return std::make_unique<WindEditorApp>();
 }

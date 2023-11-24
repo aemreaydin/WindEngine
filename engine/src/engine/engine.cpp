@@ -1,12 +1,24 @@
 #include "engine.hpp"
+#include "app.hpp"
 #include "core/logger.hpp"
 #include <SDL.h>
 #include <SDL_vulkan.h>
-#include <memory>
 
-void WindEngine::Engine::Run()
+namespace WindEngine
 {
-    if ( !Initialize() )
+
+Engine::Engine( std::unique_ptr<App> app ) : _app( std::move( app ) ), _isInitialized( Initialize() )
+{
+}
+
+Engine::~Engine()
+{
+    Shutdown();
+}
+
+void Engine::Run()
+{
+    if ( !_isInitialized )
     {
         Shutdown();
         return;
@@ -15,23 +27,17 @@ void WindEngine::Engine::Run()
     _isRunning = true;
     while ( _isRunning )
     {
-        WindEngine::Core::Window::PollEvents( _isRunning );
+        Core::Window::PollEvents( _isRunning );
+
+        _app->Update();
+        _app->Render();
     }
 
     Shutdown();
 }
 
-auto WindEngine::Engine::Initialize() -> bool
+auto Engine::Initialize() -> bool
 {
-    Core::Logger::Initialize();
-
-    WIND_TRACE( "Testing logger v{}", 0.0 );
-    WIND_DEBUG( "Testing logger v{}", 0.0 );
-    WIND_INFO( "Testing logger v{}", 0.0 );
-    WIND_WARN( "Testing logger v{}", 0.0 );
-    WIND_ERROR( "Testing logger v{}", 0.0 );
-    WIND_FATAL( "Testing logger v{}", 0.0 );
-
     if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
     {
         WIND_ERROR( "SDL_Init failed. {}", SDL_GetError() );
@@ -43,13 +49,17 @@ auto WindEngine::Engine::Initialize() -> bool
         return false;
     }
 
+    _app->Initialize();
     return true;
 }
 
-void WindEngine::Engine::Shutdown()
+void Engine::Shutdown()
 {
+    _app->Shutdown();
+
+    // Destroy SDL related objects
     _window.Shutdown();
     SDL_Quit();
-
-    Core::Logger::Shutdown();
 }
+
+}  // namespace WindEngine

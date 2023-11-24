@@ -9,7 +9,7 @@
 #define WIND_BREAK __builtin_trap();
 #endif
 
-void logAssertFailure( const char* expr, const char* message, const char* file, int line );
+void LogAssertFailure( const char* expr, const char* message, const char* file, int line );
 
 #define WIND_ASSERT_MSG( expr, msg )                                                                                   \
     if ( ( expr ) )                                                                                                    \

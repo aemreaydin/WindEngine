@@ -1,7 +1,7 @@
 #ifndef WINDENGINE_DEFINES_HPP
 #define WINDENGINE_DEFINES_HPP
 
-#include <cstdint>
+#include <cstdlib>
 
 using U8 = uint8_t;
 using U16 = uint16_t;
@@ -56,4 +56,5 @@ constexpr auto kPlatformLinux = 1;
 #define WINDAPI
 #endif
 #endif
+
 #endif  // WINDENGINE_DEFINES_HPP
