@@ -7,7 +7,7 @@
 namespace WindEngine
 {
 
-Engine::Engine( std::unique_ptr<App> app ) : _app( std::move( app ) ), _isInitialized( Initialize() )
+Engine::Engine( std::unique_ptr<App> app ) : _upApp( std::move( app ) ), _isInitialized( Initialize() )
 {
 }
 
@@ -29,8 +29,8 @@ void Engine::Run()
     {
         Core::Window::PollEvents( _isRunning );
 
-        _app->Update();
-        _app->Render();
+        _upApp->Update();
+        _upApp->Render();
     }
 
     Shutdown();
@@ -49,13 +49,13 @@ auto Engine::Initialize() -> bool
         return false;
     }
 
-    _app->Initialize();
+    _upApp->Initialize();
     return true;
 }
 
 void Engine::Shutdown()
 {
-    _app->Shutdown();
+    _upApp->Shutdown();
 
     // Destroy SDL related objects
     _window.Shutdown();

@@ -25,7 +25,7 @@ private:
     [[nodiscard]] auto Initialize() -> bool;
     void Shutdown();
 
-    std::unique_ptr<App> _app;
+    std::unique_ptr<App> _upApp;
     Core::Window _window{};
 
     bool _isInitialized{ false };
