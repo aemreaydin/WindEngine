@@ -1,16 +1,17 @@
 #ifndef WINDENGINE_LOGGER_HPP
 #define WINDENGINE_LOGGER_HPP
 
-#include "../defines.hpp"
+#include "defines.hpp"
 #include <spdlog/spdlog.h>
 
 constexpr const char* kLoggerName = "WindLogger";
 
 namespace WindEngine::Core
 {
+
 class WINDAPI Logger
 {
-  public:
+public:
     static void Initialize();
     static void Shutdown();
 };

@@ -2,13 +2,16 @@
 #include <memory>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+namespace WindEngine::Core
+{
+
 #if NDEBUG
 constexpr auto kLogLevel = spdlog::level::info;
 #else
 constexpr auto kLogLevel = spdlog::level::trace;
 #endif
 
-void WindEngine::Core::Logger::Initialize()
+void Logger::Initialize()
 {
     std::vector<spdlog::sink_ptr> sinks{ std::make_shared<spdlog::sinks::stdout_color_sink_mt>() };
     auto logger = std::make_shared<spdlog::logger>( kLoggerName, sinks.begin(), sinks.end() );
@@ -19,7 +22,9 @@ void WindEngine::Core::Logger::Initialize()
     spdlog::register_logger( logger );
 }
 
-void WindEngine::Core::Logger::Shutdown()
+void Logger::Shutdown()
 {
     spdlog::shutdown();
 }
+
+}  // namespace WindEngine::Core

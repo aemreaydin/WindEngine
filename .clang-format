@@ -18,3 +18,8 @@ SpaceBeforeRangeBasedForLoopColon: true
 SpacesBeforeTrailingComments: 2
 SpacesInParentheses: true
 SeparateDefinitionBlocks: Always
+AccessModifierOffset: -4
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+IncludeBlocks: Merge
+InsertBraces: true

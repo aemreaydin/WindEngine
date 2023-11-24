@@ -3,21 +3,32 @@
 
 #include "core/window.hpp"
 #include "defines.hpp"
+#include <memory>
 
 namespace WindEngine
 {
+class App;
+
 class WINDAPI Engine
 {
-  public:
-    Engine() = default;
+public:
+    explicit Engine( std::unique_ptr<App> app );
+    ~Engine();
+    Engine( const Engine& ) = delete;
+    Engine( const Engine&& ) = delete;
+    auto operator=( const Engine& ) -> Engine& = delete;
+    auto operator=( const Engine&& ) -> Engine& = delete;
 
     void Run();
 
-  private:
+private:
     [[nodiscard]] auto Initialize() -> bool;
     void Shutdown();
 
+    std::unique_ptr<App> _app;
     Core::Window _window{};
+
+    bool _isInitialized{ false };
     bool _isRunning{ false };
 };
 }  // namespace WindEngine
