@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "app.hpp"
+#include "appState.hpp"
 #include "core/logger.hpp"
 #include <SDL.h>
 #include <SDL_vulkan.h>
@@ -9,32 +10,14 @@ namespace WindEngine
 using namespace WindEngine::Core;
 using namespace WindEngine::Core::Memory;
 
-Engine::Engine( std::unique_ptr<App> app ) : _upApp( std::move( app ) ), _isInitialized( Initialize() )
+Engine::Engine( std::unique_ptr<App> app ) : _upApp( std::move( app ) ), _spAppState( std::make_shared<AppState>() )
 {
+    _spAppState->isInitialized = Initialize();
+    _spAppState->isRunning = true;
 }
 
 Engine::~Engine()
 {
-    Shutdown();
-}
-
-void Engine::Run()
-{
-    if ( !_isInitialized )
-    {
-        Shutdown();
-        return;
-    }
-
-    _isRunning = true;
-    while ( _isRunning )
-    {
-        Core::Window::PollEvents( _isRunning );
-
-        _upApp->Update();
-        _upApp->Render();
-    }
-
     Shutdown();
 }
 
@@ -61,6 +44,30 @@ auto Engine::Initialize() -> bool
     _allocationManager.PrintStats();
 
     return true;
+}
+
+void Engine::Run()
+{
+    if ( !_spAppState->isInitialized )
+    {
+        Shutdown();
+        return;
+    }
+
+    while ( _spAppState->isRunning )
+    {
+        _window.PollEvents( *_spAppState );
+
+        if ( !_spAppState->isSuspended )
+        {
+            continue;
+        }
+        
+        _upApp->Update();
+        _upApp->Render();
+    }
+
+    Shutdown();
 }
 
 void Engine::Shutdown()
