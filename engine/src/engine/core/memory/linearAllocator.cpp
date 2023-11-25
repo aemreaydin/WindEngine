@@ -29,7 +29,6 @@ void LinearAllocator::Init()
     WIND_DEBUG( "LinearAllocator::Init" );
 }
 
-// TODO: Add alignment
 auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
 {
     size_t padding = 0;
