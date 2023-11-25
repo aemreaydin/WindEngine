@@ -1,6 +1,6 @@
 #include "linearAllocator.hpp"
-#include "assert.hpp"
-#include "logger.hpp"
+#include "core/assert.hpp"
+#include "core/logger.hpp"
 #include <spdlog/fmt/fmt.h>
 
 namespace WindEngine::Core::Memory
@@ -10,6 +10,12 @@ static constexpr size_t kAlignment = sizeof( void* );
 
 LinearAllocator::LinearAllocator( size_t size ) : Allocator( size )
 {
+}
+
+LinearAllocator::~LinearAllocator()
+{
+    std::free( _pStart );
+    _pStart = nullptr;
 }
 
 void LinearAllocator::Init()

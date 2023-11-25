@@ -6,6 +6,8 @@
 
 namespace WindEngine
 {
+using namespace WindEngine::Core;
+using namespace WindEngine::Core::Memory;
 
 Engine::Engine( std::unique_ptr<App> app ) : _upApp( std::move( app ) ), _isInitialized( Initialize() )
 {
@@ -50,6 +52,14 @@ auto Engine::Initialize() -> bool
     }
 
     _upApp->Initialize();
+
+    auto* ptrApp = _allocationManager.Allocate( 64, AllocationType::APPLICATION );
+    auto* ptrTex = _allocationManager.Allocate( 32, AllocationType::TEXTURE );
+    _allocationManager.PrintStats();
+    _allocationManager.Free( ptrApp, 64, AllocationType::APPLICATION );
+    _allocationManager.Free( ptrTex, 32, AllocationType::TEXTURE );
+    _allocationManager.PrintStats();
+
     return true;
 }
 

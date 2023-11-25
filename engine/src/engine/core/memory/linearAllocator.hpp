@@ -10,8 +10,13 @@ class LinearAllocator : public Allocator
 {
 public:
     explicit LinearAllocator( size_t size );
+    ~LinearAllocator() override;
+    LinearAllocator( const LinearAllocator& ) = delete;
+    LinearAllocator( const LinearAllocator&& ) = delete;
+    auto operator=( const LinearAllocator& ) -> LinearAllocator& = delete;
+    auto operator=( const LinearAllocator&& ) -> LinearAllocator& = delete;
 
-    void Init();
+    void Init() override;
     auto Allocate( size_t size, bool shouldAlign ) -> void* override;
     void Free( void* ptr ) override;
     void Reset();

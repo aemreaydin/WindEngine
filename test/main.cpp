@@ -1,4 +1,7 @@
+#include <engine/app.hpp>
+#include <engine/core/logger.hpp>
 #include <engine/main.hpp>
+#include <memory>
 
 using namespace WindEngine;
 

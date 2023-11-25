@@ -23,6 +23,10 @@ public:
     auto operator=( const Allocator& ) -> Allocator& = delete;
     auto operator=( const Allocator&& ) -> Allocator& = delete;
 
+    virtual void Init()
+    {
+    }
+
     virtual auto Allocate( size_t size, bool shouldAlign ) -> void* = 0;
     virtual void Free( void* ptr ) = 0;
 
