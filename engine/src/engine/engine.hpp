@@ -1,6 +1,7 @@
 #ifndef WINDENGINE_ENGINE_HPP
 #define WINDENGINE_ENGINE_HPP
 
+#include "core/memory/allocationManager.hpp"
 #include "core/window.hpp"
 #include "defines.hpp"
 #include <memory>
@@ -25,8 +26,9 @@ private:
     [[nodiscard]] auto Initialize() -> bool;
     void Shutdown();
 
-    std::unique_ptr<App> _app;
+    std::unique_ptr<App> _upApp;
     Core::Window _window{};
+    Core::Memory::AllocationManager _allocationManager;
 
     bool _isInitialized{ false };
     bool _isRunning{ false };

@@ -17,7 +17,7 @@ void LogAssertFailure( const char* expr, const char* message, const char* file, 
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        logAssertFailure( #expr, msg, __FILE_NAME__, __LINE__ );                                                       \
+        LogAssertFailure( #expr, msg, __FILE_NAME__, __LINE__ );                                                       \
         WIND_BREAK                                                                                                     \
     }
 

@@ -1,8 +1,12 @@
 # IDE files
 .idea/
+.vscode
+
+# Cache files
+.xmake/
 
 # Build files
-build*/
+build*
 cmake-build*/
 
 # Prerequisites
