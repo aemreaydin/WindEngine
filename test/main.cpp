@@ -21,12 +21,14 @@ public:
 
     void Update() override
     {
-        WIND_TRACE( "WindEditorApp::Update." )
+        SDL_Delay( 3 + rand() % 5 );
+        //        WIND_TRACE( "WindEditorApp::Update." )
     }
 
     void Render() override
     {
-        WIND_TRACE( "WindEditorApp::Render." )
+        SDL_Delay( 3 + rand() % 5 );
+        //        WIND_TRACE( "WindEditorApp::Render." )
     }
 };
 

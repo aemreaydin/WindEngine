@@ -75,6 +75,9 @@ void Window::OnKeyPress( AppState& appState ) const
     case SDLK_F1:
         appState.isSuspended = !appState.isSuspended;
         break;
+    case SDLK_F2:
+        appState.isFrameRateFixed = !appState.isFrameRateFixed;
+        break;
     }
 }
 
