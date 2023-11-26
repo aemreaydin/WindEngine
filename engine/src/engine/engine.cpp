@@ -58,11 +58,11 @@ void Engine::Run()
     {
         _window.PollEvents( *_spAppState );
 
-        if ( !_spAppState->isSuspended )
+        if ( _spAppState->isSuspended )
         {
             continue;
         }
-        
+
         _upApp->Update();
         _upApp->Render();
     }
