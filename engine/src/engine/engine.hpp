@@ -9,6 +9,7 @@
 namespace WindEngine
 {
 class App;
+struct AppState;
 
 class WINDAPI Engine
 {
@@ -27,11 +28,9 @@ private:
     void Shutdown();
 
     std::unique_ptr<App> _upApp;
+    std::shared_ptr<AppState> _spAppState;
     Core::Window _window{};
     Core::Memory::AllocationManager _allocationManager;
-
-    bool _isInitialized{ false };
-    bool _isRunning{ false };
 };
 }  // namespace WindEngine
 

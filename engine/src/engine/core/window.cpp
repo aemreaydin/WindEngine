@@ -1,6 +1,6 @@
 #include "window.hpp"
+#include "appState.hpp"
 #include "logger.hpp"
-#include <SDL.h>
 #include <SDL_vulkan.h>
 
 namespace WindEngine::Core
@@ -19,15 +19,37 @@ auto Window::Initialize() -> bool
     return true;
 }
 
-void Window::PollEvents( bool& isRunning )
+void Window::PollEvents( AppState& appState )
 {
-    SDL_Event event;
-    while ( SDL_PollEvent( &event ) != 0 )
+    while ( SDL_PollEvent( &_currentEvent ) != 0 )
     {
-        if ( event.type == SDL_QUIT || ( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE ) )
+        switch ( _currentEvent.type )
         {
-            isRunning = false;
+        case SDL_KEYDOWN: {
+            OnKeyPress( appState );
+            break;
         }
+        case SDL_KEYUP: {
+            OnKeyRelease( appState );
+            break;
+        }
+        case SDL_MOUSEBUTTONDOWN: {
+            OnButtonPress( appState );
+            break;
+        }
+        case SDL_MOUSEBUTTONUP: {
+            OnButtonRelease( appState );
+            break;
+        }
+        case SDL_MOUSEWHEEL:
+            OnMouseMove( appState );
+            break;
+        case SDL_MOUSEMOTION: {
+            OnMouseWheel( appState );
+            break;
+        }
+        }
+
         break;
     }
 }
@@ -40,6 +62,63 @@ void Window::Shutdown()
     }
     SDL_DestroyWindow( _window );
     WIND_DEBUG( "Window::Shutdown" );
+}
+
+void Window::OnKeyPress( AppState& appState ) const
+{
+    WIND_DEBUG( "KeyDown: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
+    switch ( _currentEvent.key.keysym.sym )
+    {
+    case SDLK_ESCAPE:
+        appState.isRunning = false;
+        break;
+    case SDLK_F1:
+        appState.isSuspended = !appState.isSuspended;
+        break;
+    }
+}
+
+void Window::OnKeyRelease( AppState& appState ) const
+{
+    WIND_DEBUG( "KeyUp: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
+}
+
+void Window::OnButtonPress( AppState& appState ) const
+{
+    switch ( _currentEvent.button.button )
+    {
+    case SDL_BUTTON_LEFT:
+        WIND_DEBUG( "Left Mouse Button Pressed." )
+        break;
+    case SDL_BUTTON_RIGHT:
+        WIND_DEBUG( "Right Mouse Button Pressed." )
+        break;
+    }
+}
+
+void Window::OnButtonRelease( AppState& appState ) const
+{
+    switch ( _currentEvent.button.button )
+    {
+    case SDL_BUTTON_LEFT:
+        WIND_DEBUG( "Left Mouse Button Released." )
+        break;
+    case SDL_BUTTON_RIGHT:
+        WIND_DEBUG( "Right Mouse Button Released." )
+        break;
+    }
+}
+
+void Window::OnMouseMove( AppState& appState ) const
+{
+    WIND_DEBUG( "Mouse Wheel: {}-{}", _currentEvent.wheel.x, _currentEvent.wheel.y )
+}
+
+void Window::OnMouseWheel( AppState& appState ) const
+{
+    const auto mouseX = _currentEvent.motion.x;
+    const auto mouseY = _currentEvent.motion.y;
+    WIND_DEBUG( "Mouse Position: {}-{}", mouseX, mouseY )
 }
 
 }  // namespace WindEngine::Core
