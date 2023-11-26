@@ -63,8 +63,12 @@ void Engine::Run()
             continue;
         }
 
+        _spAppState->FrameStart();
+
         _upApp->Update();
         _upApp->Render();
+
+        _spAppState->FrameEnd();
     }
 
     Shutdown();
