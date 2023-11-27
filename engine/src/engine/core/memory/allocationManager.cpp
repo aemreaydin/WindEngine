@@ -1,7 +1,6 @@
 #include "allocationManager.hpp"
 #include "../logger.hpp"
 #include <array>
-#include <cstddef>
 #include <memory>
 
 namespace WindEngine::Core::Memory

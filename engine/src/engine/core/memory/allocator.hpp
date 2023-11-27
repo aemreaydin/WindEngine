@@ -6,6 +6,7 @@
 
 namespace WindEngine::Core::Memory
 {
+
 class Allocator
 {
 public:
@@ -16,7 +17,7 @@ public:
     virtual ~Allocator()
     {
         _size = 0;
-    };
+    }
 
     Allocator( const Allocator& ) = delete;
     Allocator( const Allocator&& ) = delete;
@@ -38,6 +39,7 @@ public:
 private:
     size_t _size;
 };
+
 }  // namespace WindEngine::Core::Memory
 
 #endif  // WINDENGINE_ALLOCATOR_HPP

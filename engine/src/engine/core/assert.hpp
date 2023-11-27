@@ -23,7 +23,7 @@ void LogAssertFailure( const char* expr, const char* message, const char* file, 
 
 #define WIND_ASSERT( expr ) WIND_ASSERT_MSG( expr, "" )
 
-#if NDEBUG
+#if defined( NDEBUG )
 #define WIND_ASSERT_DEBUG( expr, msg )
 #else
 #define WIND_ASSERT_DEBUG( expr, msg ) WIND_ASSERT_MSG( expr, msg )

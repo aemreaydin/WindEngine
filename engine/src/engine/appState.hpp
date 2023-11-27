@@ -7,7 +7,7 @@
 namespace WindEngine
 {
 
-constexpr F64 kFrameRate = 1.0F / 60.0F * 1000.0F;
+constexpr F64 kFrameRate = 1.0 / 60.0 * 1000.0;
 
 struct FrameStats
 {
@@ -43,18 +43,18 @@ struct AppState
         if ( isFrameRateFixed )
         {
             const F64 delay = kFrameRate - timeElapsed;
-            WIND_TRACE( "Delta Time: {} ms - Time Elapsed: {} ms - Delaying by {} ms.", deltaTime, timeElapsed, delay );
+            WIND_TRACE( "Delta Time: {} ms - Time Elapsed: {} ms - Delaying by {} ms.", deltaTime, timeElapsed, delay )
             SDL_Delay( static_cast<U32>( delay ) );
 
             frameStats.totalFrames += 1;
             frameStats.totalTicks += timeElapsed + delay;
-            WIND_TRACE( "Current FPS: {}", 1000.0F / ( timeElapsed + delay ) )
+            WIND_TRACE( "Current FPS: {}", 1000.0 / ( timeElapsed + delay ) )
         }
         else
         {
             frameStats.totalFrames += 1;
             frameStats.totalTicks += timeElapsed;
-            WIND_TRACE( "Current FPS: {}", 1000.0F / ( timeElapsed ) )
+            WIND_TRACE( "Current FPS: {}", 1000.0 / ( timeElapsed ) )
         }
 
         lastFrameStartTime = frameStartTime;

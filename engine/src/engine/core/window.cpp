@@ -12,10 +12,10 @@ auto Window::Initialize() -> bool
                                 SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
     if ( _window == nullptr )
     {
-        WIND_ERROR( "Failed to create SDL_Window. {}", SDL_GetError() );
+        WIND_ERROR( "Failed to create SDL_Window. {}", SDL_GetError() )
         return false;
     }
-    WIND_DEBUG( "Window::Initialize" );
+    WIND_DEBUG( "Window::Initialize" )
     return true;
 }
 
@@ -61,7 +61,7 @@ void Window::Shutdown()
         return;
     }
     SDL_DestroyWindow( _window );
-    WIND_DEBUG( "Window::Shutdown" );
+    WIND_DEBUG( "Window::Shutdown" )
 }
 
 void Window::OnKeyPress( AppState& appState ) const
@@ -81,12 +81,12 @@ void Window::OnKeyPress( AppState& appState ) const
     }
 }
 
-void Window::OnKeyRelease( AppState& appState ) const
+void Window::OnKeyRelease( [[maybe_unused]] AppState& appState ) const
 {
     WIND_DEBUG( "KeyUp: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
 }
 
-void Window::OnButtonPress( AppState& appState ) const
+void Window::OnButtonPress( [[maybe_unused]] AppState& appState ) const
 {
     switch ( _currentEvent.button.button )
     {
@@ -99,7 +99,7 @@ void Window::OnButtonPress( AppState& appState ) const
     }
 }
 
-void Window::OnButtonRelease( AppState& appState ) const
+void Window::OnButtonRelease( [[maybe_unused]] AppState& appState ) const
 {
     switch ( _currentEvent.button.button )
     {
@@ -112,12 +112,12 @@ void Window::OnButtonRelease( AppState& appState ) const
     }
 }
 
-void Window::OnMouseMove( AppState& appState ) const
+void Window::OnMouseMove( [[maybe_unused]] AppState& appState ) const
 {
     WIND_DEBUG( "Mouse Wheel: {}-{}", _currentEvent.wheel.x, _currentEvent.wheel.y )
 }
 
-void Window::OnMouseWheel( AppState& appState ) const
+void Window::OnMouseWheel( [[maybe_unused]] AppState& appState ) const
 {
     const auto mouseX = _currentEvent.motion.x;
     const auto mouseY = _currentEvent.motion.y;

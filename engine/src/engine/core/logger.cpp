@@ -5,7 +5,7 @@
 namespace WindEngine::Core
 {
 
-#if NDEBUG
+#if defined( NDEBUG )
 constexpr auto kLogLevel = spdlog::level::info;
 #else
 constexpr auto kLogLevel = spdlog::level::trace;
