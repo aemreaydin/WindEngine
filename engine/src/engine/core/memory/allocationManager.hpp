@@ -40,8 +40,8 @@ public:
     void PrintStats();
 
 private:
-    std::unique_ptr<CAllocator> _allocator{ nullptr };
-    MemoryStats _stats{};
+    std::unique_ptr<CAllocator> _allocator { nullptr };
+    MemoryStats _stats {};
 };
 
 }  // namespace WindEngine::Core::Memory

@@ -26,8 +26,8 @@ public:
     void Shutdown();
 
 private:
-    SDL_Window* _window{ nullptr };
-    SDL_Event _currentEvent{};
+    SDL_Window* _window { nullptr };
+    SDL_Event _currentEvent {};
 };
 
 }  // namespace WindEngine::Core

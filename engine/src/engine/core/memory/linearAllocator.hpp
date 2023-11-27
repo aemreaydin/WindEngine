@@ -22,8 +22,8 @@ public:
     void Reset();
 
 private:
-    std::byte* _pStart{ nullptr };
-    size_t _offset{ 0 };
+    std::byte* _pStart { nullptr };
+    size_t _offset { 0 };
 };
 
 }  // namespace WindEngine::Core::Memory

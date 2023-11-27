@@ -57,4 +57,9 @@ constexpr auto kPlatformLinux = 1;
 #endif
 #endif
 
+template <class T> constexpr auto ToU32( T res ) -> U32
+{
+    return static_cast<uint32_t>( res );
+}
+
 #endif  // WINDENGINE_DEFINES_HPP
