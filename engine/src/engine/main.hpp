@@ -23,7 +23,7 @@ auto main() -> int
 {
     WindEngine::Core::Logger::Initialize();
 
-    WindEngine::Core::Memory::LinearAllocator allocator{ 256 };
+    WindEngine::Core::Memory::LinearAllocator allocator { 256 };
     allocator.Init();
 
     *( static_cast<U8*>( allocator.Allocate( sizeof( U8 ), true ) ) ) = 1;
@@ -31,7 +31,7 @@ auto main() -> int
     *( static_cast<TestStruct*>( allocator.Allocate( sizeof( TestStruct ), true ) ) ) = { 6, 7, 2 };
 
     {
-        WindEngine::Engine engine{ CreateApp() };
+        WindEngine::Engine engine { CreateApp() };
         engine.Run();
     }
 

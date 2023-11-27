@@ -13,7 +13,7 @@ constexpr auto kLogLevel = spdlog::level::trace;
 
 void Logger::Initialize()
 {
-    std::vector<spdlog::sink_ptr> sinks{ std::make_shared<spdlog::sinks::stdout_color_sink_mt>() };
+    std::vector<spdlog::sink_ptr> sinks { std::make_shared<spdlog::sinks::stdout_color_sink_mt>() };
     auto logger = std::make_shared<spdlog::logger>( kLoggerName, sinks.begin(), sinks.end() );
     logger->set_pattern( "%^[%H:%M:%S:%e] (Thread #%t) [%n-%L] > %v%$" );
     logger->set_level( kLogLevel );

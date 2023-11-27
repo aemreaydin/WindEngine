@@ -17,15 +17,15 @@ struct FrameStats
 
 struct AppState
 {
-    bool isInitialized{ false };
-    bool isRunning{ false };
-    bool isSuspended{ false };
-    bool isFrameRateFixed{ false };
+    bool isInitialized { false };
+    bool isRunning { false };
+    bool isSuspended { false };
+    bool isFrameRateFixed { false };
 
-    F64 deltaTime{};
-    U64 frameStartTime{};
-    U64 lastFrameStartTime{};
-    FrameStats frameStats{};
+    F64 deltaTime {};
+    U64 frameStartTime {};
+    U64 lastFrameStartTime {};
+    FrameStats frameStats {};
 
     void FrameStart()
     {

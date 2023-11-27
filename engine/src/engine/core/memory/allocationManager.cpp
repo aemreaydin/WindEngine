@@ -7,9 +7,9 @@
 namespace WindEngine::Core::Memory
 {
 
-constexpr std::array<const char*, kAllocationTypeSize> kTagNames{ "ARRAY",     "VECTOR", "APPLICATION",
-                                                                  "TEXTURE",   "GAME",   "RENDERER",
-                                                                  "TRANSFORM", "SCENE",  "DEBUG" };
+constexpr std::array<const char*, kAllocationTypeSize> kTagNames { "ARRAY",     "VECTOR", "APPLICATION",
+                                                                   "TEXTURE",   "GAME",   "RENDERER",
+                                                                   "TRANSFORM", "SCENE",  "DEBUG" };
 
 AllocationManager::AllocationManager() : _allocator( std::make_unique<CAllocator>() )
 {

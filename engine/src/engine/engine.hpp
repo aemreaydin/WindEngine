@@ -1,9 +1,10 @@
 #ifndef WINDENGINE_ENGINE_HPP
 #define WINDENGINE_ENGINE_HPP
 
-#include "core/memory/allocationManager.hpp"
-#include "core/window.hpp"
+#include "allocationManager.hpp"
 #include "defines.hpp"
+#include "renderer.hpp"
+#include "window.hpp"
 #include <memory>
 
 namespace WindEngine
@@ -24,13 +25,14 @@ public:
     void Run();
 
 private:
-    [[nodiscard]] auto Initialize() -> bool;
+    auto Initialize() -> bool;
     void Shutdown();
 
-    std::unique_ptr<App> _upApp;
-    std::shared_ptr<AppState> _spAppState;
-    Core::Window _window{};
-    Core::Memory::AllocationManager _allocationManager;
+    std::unique_ptr<App> _upApp { nullptr };
+    std::shared_ptr<AppState> _spAppState { nullptr };
+    Core::Window _window {};
+    Core::Memory::AllocationManager _allocationManager {};
+    std::unique_ptr<Core::Render::Renderer> _upRenderer { nullptr };
 };
 }  // namespace WindEngine
 
