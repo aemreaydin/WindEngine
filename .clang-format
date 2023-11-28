@@ -24,3 +24,4 @@ EmptyLineBeforeAccessModifier: Always
 IncludeBlocks: Merge
 InsertBraces: true
 SpaceBeforeCpp11BracedList: true
+InsertNewlineAtEOF: true

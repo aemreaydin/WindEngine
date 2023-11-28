@@ -28,8 +28,11 @@ Engine::Engine( std::unique_ptr<App> app )
   : _upApp( std::move( app ) ), _spAppState( std::make_shared<AppState>() ),
     _upRenderer( CreateRenderer( kDefaultRenderer ) )
 {
-    _spAppState->isInitialized = Initialize();
-    _spAppState->isRunning = true;
+    if ( Initialize() )
+    {
+        _spAppState->isInitialized = true;
+        _spAppState->isRunning = true;
+    }
 }
 
 Engine::~Engine()
@@ -60,6 +63,10 @@ auto Engine::Initialize() -> bool
 
 void Engine::Run()
 {
+    if ( !_spAppState->isInitialized )
+    {
+        return;
+    }
     while ( _spAppState->isRunning )
     {
         _window.PollEvents( *_spAppState );
@@ -80,6 +87,10 @@ void Engine::Run()
 
 void Engine::Shutdown()
 {
+    if ( !_spAppState->isInitialized )
+    {
+        return;
+    }
     _upApp->Shutdown();
 
     _upRenderer->Shutdown();

@@ -8,11 +8,11 @@ constexpr vk::InstanceCreateFlags kInstanceCreateFlags = vk::InstanceCreateFlagB
 constexpr vk::InstanceCreateFlags kInstanceCreateFlags = 0;
 #endif
 
-#if NDEBUG
-constexpr auto kIncludeValidation = false;
-#else
-constexpr auto kIncludeValidation = true;
-#endif
+// #if defined( NDEBUG )
+// constexpr auto kIncludeValidation = false;
+// #else
+// constexpr auto kIncludeValidation = true;
+// #endif
 
 namespace WindEngine::Core::Render
 {
@@ -44,14 +44,14 @@ auto CreateInstance( const char* applicationName, const vk::AllocationCallbacks&
 #endif
 
     const vk::InstanceCreateInfo instanceInfo {
-        .flags = vk::InstanceCreateFlags { VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR },
+        .flags = kInstanceCreateFlags,
         .pApplicationInfo = &appInfo,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = nullptr,
         .enabledExtensionCount = ToU32( enabledExtensions.size() ),
         .ppEnabledExtensionNames = enabledExtensions.data(),
     };
-    return vk::createInstance( instanceInfo, nullptr );
+    return vk::createInstance( instanceInfo, allocator );
 }
 
 void VulkanRenderer::Initialize( const char* applicationName )

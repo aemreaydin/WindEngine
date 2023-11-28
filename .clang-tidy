@@ -1,4 +1,6 @@
 Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*, 
   *, 
   -*magic-numbers,
   -altera*, -llvm*, -fuchsia*, -hicpp*,
@@ -13,34 +15,36 @@ Checks: >
   -*-pro-bounds-constant-array-index
 WarningsAsErrors: "*"
 CheckOptions:
-  - { key: readability-identifier-naming.ClassCase,                       value: CamelCase }
-  - { key: readability-identifier-naming.ClassMemberCase,                 value: camelBack }
-  - { key: readability-identifier-naming.ClassMemberPrefix,               value: m }
-  - { key: readability-identifier-naming.ClassMethodCase,                 value: CamelCase }
-  - { key: readability-identifier-naming.ConstantCase,                    value: CamelCase }
-  - { key: readability-identifier-naming.ConstantPrefix,                  value: k }
-  - { key: readability-identifier-naming.ConstexprVariableCase,           value: CamelCase }
-  - { key: readability-identifier-naming.ConstexprVariablePrefix,         value: k }
-  - { key: readability-identifier-naming.EnumCase,                        value: CamelCase }
-  - { key: readability-identifier-naming.EnumConstantCase,                value: UPPER_CASE }
-  - { key: readability-identifier-naming.FunctionCase,                    value: CamelCase }
-  - { key: readability-identifier-naming.LocalConstantCase,               value: camelBack }
-  - { key: readability-identifier-naming.LocalVariableCase,               value: camelBack }
-  - { key: readability-identifier-naming.MacroDefinitionCase,             value: UPPER_CASE }
-  - { key: readability-identifier-naming.MemberCase,                      value: camelBack }
-  - { key: readability-identifier-naming.MethodCase,                      value: camelBack }
-  - { key: readability-identifier-naming.NamespaceCase,                   value: CamelCase }
-  - { key: readability-identifier-naming.ParameterCase,                   value: camelBack }
-  - { key: readability-identifier-naming.PrivateMemberCase,               value: camelBack }
-  - { key: readability-identifier-naming.PrivateMemberPrefix,             value: _ }
-  - { key: readability-identifier-naming.PrivateMethodCase,               value: CamelCase }
-  - { key: readability-identifier-naming.ProtectedMemberCase,             value: camelBack }
-  - { key: readability-identifier-naming.ProtectedMemberPrefix,           value: _ }
-  - { key: readability-identifier-naming.ProtectedMethodCase,             value: CamelCase }
-  - { key: readability-identifier-naming.PublicMethodCase,                value: CamelCase }
-  - { key: readability-identifier-naming.StructCase,                      value: CamelCase }
-  - { key: readability-identifier-naming.TemplateParameterCase,           value: CamelCase }
-  - { key: readability-identifier-naming.TypeAliasCase,                   value: CamelCase }
-  - { key: readability-identifier-naming.VariableCase,                    value: camelBack }
-  - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: true }
-  - { key: cppcoreguidelines-avoid-magic-numbers.IgnoreAllFloatingPointValues, value: true }
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.ClassMemberCase: camelBack
+  readability-identifier-naming.ClassMemberPrefix: m
+  readability-identifier-naming.ClassMethodCase: CamelCase
+  readability-identifier-naming.ConstantCase: CamelCase
+  readability-identifier-naming.ConstantPrefix: k
+  readability-identifier-naming.ConstexprVariableCase: CamelCase
+  readability-identifier-naming.ConstexprVariablePrefix: k
+  readability-identifier-naming.GlobalFunctionCase: UPPER_CASE
+  readability-identifier-naming.GlobalFunctionPrefix: G_
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.FunctionCase: CamelCase
+  readability-identifier-naming.LocalConstantCase: camelBack
+  readability-identifier-naming.LocalVariableCase: camelBack
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.MemberCase: camelBack
+  readability-identifier-naming.MethodCase: camelBack
+  readability-identifier-naming.NamespaceCase: CamelCase
+  readability-identifier-naming.ParameterCase: camelBack
+  readability-identifier-naming.PrivateMemberCase: camelBack
+  readability-identifier-naming.PrivateMemberPrefix: _
+  readability-identifier-naming.PrivateMethodCase: CamelCase
+  readability-identifier-naming.ProtectedMemberCase: camelBack
+  readability-identifier-naming.ProtectedMemberPrefix: _
+  readability-identifier-naming.ProtectedMethodCase: CamelCase
+  readability-identifier-naming.PublicMethodCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.TemplateParameterCase: CamelCase
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.VariableCase: camelBack
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: true
+  cppcoreguidelines-avoid-magic-numbers.IgnoreAllFloatingPointValues: true

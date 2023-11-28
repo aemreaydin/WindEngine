@@ -16,13 +16,13 @@ constexpr auto kDefaultRenderer = RendererTypes::VULKAN;
 class Renderer
 {
 public:
-    Renderer() = default;
     virtual void Initialize( const char* applicationName ) = 0;
     virtual void Shutdown() = 0;
     virtual auto BeginFrame( F64 deltaTime ) -> bool = 0;
     virtual auto EndFrame( F64 deltaTime ) -> bool = 0;
     virtual void Resize( U16 width, U16 height ) = 0;
 
+    Renderer() = default;
     virtual ~Renderer() = default;
     Renderer( const Renderer& ) = delete;
     Renderer( const Renderer&& ) = delete;

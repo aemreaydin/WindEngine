@@ -10,5 +10,17 @@ find_package(Vulkan REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(sdl2 CONFIG REQUIRED)
 
+MESSAGE(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(-Wall -Wextra -Werror)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/Wall /WX)
+endif ()
+
+if (APPLE)
+    # TODO Eventually remove this
+    SET(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
+endif ()
+
 add_subdirectory(engine)
 add_subdirectory(test)

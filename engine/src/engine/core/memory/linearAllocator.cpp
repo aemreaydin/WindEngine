@@ -26,7 +26,7 @@ void LinearAllocator::Init()
     }
     _pStart = static_cast<std::byte*>( std::malloc( GetSize() ) );
     _offset = 0;
-    WIND_DEBUG( "LinearAllocator::Init" );
+    WIND_DEBUG( "LinearAllocator::Init" )
 }
 
 auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
@@ -53,12 +53,12 @@ auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
 
 void LinearAllocator::Free( [[maybe_unused]] void* ptr )
 {
-    WIND_ASSERT_MSG( false, "LinearAllocator::Reset should be used instead." );
+    G_ASSERT_MSG( false, "LinearAllocator::Reset should be used instead." );
 }
 
 void LinearAllocator::Reset()
 {
-    WIND_DEBUG( "LinearAllocator::Reset" );
+    WIND_DEBUG( "LinearAllocator::Reset" )
     _offset = 0;
 }
 
