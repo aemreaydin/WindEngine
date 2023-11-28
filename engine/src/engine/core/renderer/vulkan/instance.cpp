@@ -83,9 +83,8 @@ void InstanceInitialize( const char* applicationName, VulkanContext& context )
 #endif
 
     std::vector<const char*> enabledLayers;
-    vk::DebugUtilsMessengerCreateInfoEXT debugInfo;
-    void* pNext;
 #if defined( _DBG )
+    vk::DebugUtilsMessengerCreateInfoEXT debugInfo;
     AddRequestedExtension( VK_EXT_DEBUG_UTILS_EXTENSION_NAME, enabledExtensions );
     enabledLayers.push_back( "VK_LAYER_KHRONOS_validation" );
 
@@ -99,7 +98,9 @@ void InstanceInitialize( const char* applicationName, VulkanContext& context )
                                  vk::DebugUtilsMessageTypeFlagBitsEXT::eDeviceAddressBinding,
                   .pfnUserCallback = &DebugUtilsMessengerCallback };
 
-    pNext = static_cast<vk::DebugUtilsMessengerCreateInfoEXT*>( &debugInfo );
+    void* pNext = static_cast<vk::DebugUtilsMessengerCreateInfoEXT*>( &debugInfo );
+#else
+    void* pNext { nullptr };
 #endif
     const vk::InstanceCreateInfo instanceInfo {
         .pNext = pNext,
