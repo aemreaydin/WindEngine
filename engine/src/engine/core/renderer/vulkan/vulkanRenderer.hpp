@@ -3,16 +3,10 @@
 
 #include "defines.hpp"
 #include "renderer.hpp"
-#include <vulkan/vulkan.hpp>
+#include "vulkanContext.hpp"
 
 namespace WindEngine::Core::Render
 {
-
-struct VulkanContext
-{
-    vk::Instance instance { nullptr };
-    vk::AllocationCallbacks* allocator { nullptr };
-};
 
 class VulkanRenderer : public Renderer
 {
