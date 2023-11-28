@@ -23,6 +23,8 @@ CheckOptions:
   readability-identifier-naming.ConstantPrefix: k
   readability-identifier-naming.ConstexprVariableCase: CamelCase
   readability-identifier-naming.ConstexprVariablePrefix: k
+  readability-identifier-naming.GlobalFunctionCase: UPPER_CASE
+  readability-identifier-naming.GlobalFunctionPrefix: G_
   readability-identifier-naming.EnumCase: CamelCase
   readability-identifier-naming.EnumConstantCase: UPPER_CASE
   readability-identifier-naming.FunctionCase: CamelCase

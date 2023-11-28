@@ -9,24 +9,32 @@
 #define WIND_BREAK __builtin_trap();
 #endif
 
-void LogAssertFailure( const char* expr, const char* message, const char* file, int line );
+#define STRINGIZE( expr ) #expr
 
-#define WIND_ASSERT_MSG( expr, msg )                                                                                   \
-    if ( ( expr ) )                                                                                                    \
-    {                                                                                                                  \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-        LogAssertFailure( #expr, msg, __FILE_NAME__, __LINE__ );                                                       \
-        WIND_BREAK                                                                                                     \
+void G_LOG_ASSERT_FAILURE( const char* expr, const char* message, const char* file, int line );
+
+template <typename T, typename M> void G_ASSERT_MSG( T expr, M msg )
+{
+    if ( !expr )
+    {
+        G_LOG_ASSERT_FAILURE( STRINGIZE(expr), msg, __FILE_NAME__, __LINE__ );
+        WIND_BREAK
     }
+}
 
-#define WIND_ASSERT( expr ) WIND_ASSERT_MSG( expr, "" )
+template <typename T> void G_ASSERT( T expr )
+{
+    if ( !expr )
+    {
+        G_LOG_ASSERT_FAILURE( STRINGIZE(expr), "", __FILE_NAME__, __LINE__ );
+        WIND_BREAK
+    }
+}
 
-#if defined( NDEBUG )
-#define WIND_ASSERT_DEBUG( expr, msg )
-#else
-#define WIND_ASSERT_DEBUG( expr, msg ) WIND_ASSERT_MSG( expr, msg )
-#endif
+// #if defined( NDEBUG )
+// #define WIND_ASSERT_DEBUG( expr, msg )
+// #else
+// #define WIND_ASSERT_DEBUG( expr, msg ) WIND_ASSERT_MSG( expr, msg )
+// #endif
 
 #endif  // WINDENGINE_ASSERT_HPP
