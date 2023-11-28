@@ -3,7 +3,14 @@ SET(THIRD_PARTY_LIBS
         spdlog::spdlog
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
-SET(COMPILE_DEFINITIONS DLLEXPORT VULKAN_HPP_NO_CONSTRUCTORS)
+SET(COMPILE_DEFINITIONS
+        DLLEXPORT
+        VULKAN_HPP_NO_CONSTRUCTORS
+        VULKAN_HPP_DISPATCH_LOADER_DYNAMIC
+        $<$<CONFIG:Debug>:_DBG>
+        $<$<CONFIG:RelWithDebInfo>:_DBG>
+        $<$<CONFIG:Release>:_REL>
+        $<$<CONFIG:MinSizeRel>:_REL>)
 
 add_library(WindVulkan SHARED ${Wind_Engine_Src})
 target_link_libraries(WindVulkan PUBLIC ${THIRD_PARTY_LIBS})

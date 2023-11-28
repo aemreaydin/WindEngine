@@ -35,7 +35,7 @@ static_assert( sizeof( F64 ) == 8 );
 constexpr auto kTrue = 1;
 constexpr auto kFalse = 0;
 
-#if __APPLE__
+#if defined( __APPLE__ )
 constexpr auto kPlatformApple = 1;
 #elif _WIN32
 constexpr auto kPlatformWindows = 1;

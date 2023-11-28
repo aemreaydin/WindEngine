@@ -1,7 +1,7 @@
 #ifndef WINDENGINE_ASSERT_HPP
 #define WINDENGINE_ASSERT_HPP
 
-#if __APPLE__
+#if defined( __APPLE__ )
 #define WIND_BREAK __builtin_debugtrap();
 #elif _WIN32
 #define WIND_BREAK __debugbreak();
@@ -31,7 +31,7 @@ template <typename T> void G_ASSERT( T expr )
     }
 }
 
-// #if defined( NDEBUG )
+// #if defined( _DBG )
 // #define WIND_ASSERT_DEBUG( expr, msg )
 // #else
 // #define WIND_ASSERT_DEBUG( expr, msg ) WIND_ASSERT_MSG( expr, msg )
