@@ -39,12 +39,13 @@ struct VulkanDevice
     PhysicalDeviceInfo physicalDeviceInfo {};
     SwapchainSupportInfo swapchainSupportInfo {};
 
-    auto Initialize( VulkanContext& context ) -> bool;
+    auto Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
+                     const vk::AllocationCallbacks* allocator ) -> bool;
     void Shutdown();
 
 private:
     auto InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool;
-    void InitializeDevice( const vk::AllocationCallbacks& allocator );
+    void InitializeDevice( const vk::AllocationCallbacks* allocator );
 
     static bool IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface );
     static QueueFamilyIndices FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,

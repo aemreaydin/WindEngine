@@ -1,4 +1,4 @@
-#include "instance.hpp"
+#include "vulkanInstance.hpp"
 #include <logger.hpp>
 #include <vulkan/vulkan_extension_inspection.hpp>
 #include <vulkan/vulkan_static_assertions.hpp>
@@ -10,10 +10,10 @@
 // constexpr auto kIncludeValidation = true;
 // #endif
 
-VkBool32 VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                [[maybe_unused]] void* pUserData )
+static VkBool32 VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                       VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                                       const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                       [[maybe_unused]] void* pUserData )
 {
     const auto* type = std::invoke( [&]() {
         switch ( messageTypes )
@@ -55,7 +55,7 @@ VkBool32 VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagB
 namespace WindEngine::Core::Render
 {
 
-void AddRequestedExtension( const char* requestedExtensionName, std::vector<const char*>& enabledExtensionNames )
+static void AddRequestedExtension( const char* requestedExtensionName, std::vector<const char*>& enabledExtensionNames )
 {
     if ( vk::isInstanceExtension( requestedExtensionName ) )
     {
@@ -65,7 +65,7 @@ void AddRequestedExtension( const char* requestedExtensionName, std::vector<cons
     WIND_WARN( "Failed to find extension {}." )
 }
 
-void InstanceInitialize( const char* applicationName, VulkanContext& context )
+void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window, vk::AllocationCallbacks* allocator )
 {
     const vk::ApplicationInfo appInfo {
         .pApplicationName = applicationName,
@@ -77,9 +77,9 @@ void InstanceInitialize( const char* applicationName, VulkanContext& context )
 
     vk::InstanceCreateFlags flags {};
     U32 numSDLExtensions {};
-    SDL_Vulkan_GetInstanceExtensions( context.window, &numSDLExtensions, nullptr );
+    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, nullptr );
     std::vector<const char*> enabledExtensions( numSDLExtensions );
-    SDL_Vulkan_GetInstanceExtensions( context.window, &numSDLExtensions, enabledExtensions.data() );
+    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, enabledExtensions.data() );
 
 #if defined( __APPLE__ )
     flags = vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR;
@@ -116,20 +116,20 @@ void InstanceInitialize( const char* applicationName, VulkanContext& context )
         .ppEnabledExtensionNames = enabledExtensions.data(),
     };
 
-    context.instance = vk::createInstance( instanceInfo, context.allocator );
-    VULKAN_HPP_DEFAULT_DISPATCHER.init( context.instance );
+    instance = vk::createInstance( instanceInfo, allocator );
+    VULKAN_HPP_DEFAULT_DISPATCHER.init( instance );
 
 #if defined( _DBG )
-    context.debugMessenger = context.instance.createDebugUtilsMessengerEXT( debugInfo, context.allocator );
+    debugMessenger = instance.createDebugUtilsMessengerEXT( debugInfo, allocator );
 #endif
 }
 
-void InstanceShutdown( VulkanContext& context )
+void VulkanInstance::Shutdown( vk::AllocationCallbacks* allocator )
 {
 #if defined( _DBG )
-    context.instance.destroyDebugUtilsMessengerEXT( context.debugMessenger );
+    instance.destroyDebugUtilsMessengerEXT( debugMessenger );
 #endif
-    context.instance.destroy( context.allocator );
+    instance.destroy( allocator );
 }
 
 }  // namespace WindEngine::Core::Render

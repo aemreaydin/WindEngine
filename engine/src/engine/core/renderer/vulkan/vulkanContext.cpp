@@ -16,15 +16,15 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
         return false;
     }
 
-    InstanceInitialize( applicationName, *this );
+    instance.Initialize( applicationName, window, allocator );
 
-    if ( !SDL_Vulkan_CreateSurface( window, instance, reinterpret_cast<VkSurfaceKHR*>( &surface ) ) )
+    if ( !SDL_Vulkan_CreateSurface( window, GetInstance(), reinterpret_cast<VkSurfaceKHR*>( &surface ) ) )
     {
         WIND_FATAL( "Failed to create surface." )
         return false;
     }
 
-    if ( !device.Initialize( *this ) )
+    if ( !device.Initialize( GetInstance(), surface, allocator ) )
     {
         return false;
     }
@@ -36,11 +36,21 @@ void VulkanContext::Shutdown()
 {
     device.Shutdown();
 
-    instance.destroy( surface );
+    GetInstance().destroy( surface );
 
-    InstanceShutdown( *this );
+    instance.Shutdown( allocator );
 
     SDL_DestroyWindow( window );
+}
+
+auto VulkanContext::GetInstance() const -> vk::Instance
+{
+    return instance.instance;
+}
+
+auto VulkanContext::GetDevice() const -> vk::Device
+{
+    return device.device;
 }
 
 }  // namespace WindEngine::Core::Render

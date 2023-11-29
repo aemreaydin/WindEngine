@@ -1,7 +1,6 @@
 #include "vulkanDevice.hpp"
 #include "assert.hpp"
 #include "logger.hpp"
-#include "vulkanContext.hpp"
 
 namespace WindEngine::Core::Render
 {
@@ -13,17 +12,16 @@ static std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset"
 static std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
 #endif
 
-auto VulkanDevice::Initialize( VulkanContext& context ) -> bool
+auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
+                               const vk::AllocationCallbacks* allocator ) -> bool
 {
-    if ( !InitializePhysicalDevice( context.instance, context.surface ) )
+    if ( !InitializePhysicalDevice( instance, surface ) )
     {
         WIND_FATAL( "Failed to find a suitable physical device." )
         return false;
     }
 
-    InitializeDevice( *context.allocator );
-
-    context.device = *this;
+    InitializeDevice( allocator );
 
     return true;
 }
@@ -57,7 +55,7 @@ bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const
     return false;
 }
 
-void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks& allocator )
+void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
 {
     const std::array<F32, 1> queuePriorities { 1.0F };
     const auto makeQueueInfo = [&]( U32 queueIndex ) {
