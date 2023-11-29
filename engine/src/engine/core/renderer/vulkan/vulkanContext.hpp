@@ -2,6 +2,7 @@
 #define WINDENGINE_VULKANCONTEXT_HPP
 
 #include "vulkanDevice.hpp"
+#include <SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
 
 namespace WindEngine::Core::Render
@@ -9,6 +10,7 @@ namespace WindEngine::Core::Render
 
 struct VulkanContext
 {
+    SDL_Window* window { nullptr };
     vk::Instance instance { nullptr };
     vk::AllocationCallbacks* allocator { nullptr };
 #if defined( _DBG )

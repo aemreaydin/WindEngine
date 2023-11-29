@@ -12,7 +12,7 @@ namespace WindEngine::Core::Render
 class VulkanRenderer final : public Renderer
 {
 public:
-    void Initialize( const char* applicationName, SDL_Window* window ) override;
+    auto Initialize( const char* applicationName ) -> bool override;
     void Shutdown() override;
     auto BeginFrame( F64 deltaTime ) -> bool override;
     auto EndFrame( F64 deltaTime ) -> bool override;

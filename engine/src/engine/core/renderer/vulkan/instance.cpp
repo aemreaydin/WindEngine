@@ -65,7 +65,7 @@ void AddRequestedExtension( const char* requestedExtensionName, std::vector<cons
     WIND_WARN( "Failed to find extension {}." )
 }
 
-void InstanceInitialize( SDL_Window* window, const char* applicationName, VulkanContext& context )
+void InstanceInitialize( const char* applicationName, VulkanContext& context )
 {
     const vk::ApplicationInfo appInfo {
         .pApplicationName = applicationName,
@@ -77,10 +77,10 @@ void InstanceInitialize( SDL_Window* window, const char* applicationName, Vulkan
 
     vk::InstanceCreateFlags flags {};
     U32 numSDLExtensions {};
-    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, nullptr );
+    SDL_Vulkan_GetInstanceExtensions( context.window, &numSDLExtensions, nullptr );
     std::vector<const char*> enabledExtensions( numSDLExtensions );
-    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, enabledExtensions.data() );
-    
+    SDL_Vulkan_GetInstanceExtensions( context.window, &numSDLExtensions, enabledExtensions.data() );
+
 #if defined( __APPLE__ )
     flags = vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR;
     AddRequestedExtension( VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, enabledExtensions );
@@ -122,6 +122,14 @@ void InstanceInitialize( SDL_Window* window, const char* applicationName, Vulkan
 #if defined( _DBG )
     context.debugMessenger = context.instance.createDebugUtilsMessengerEXT( debugInfo, context.allocator );
 #endif
+}
+
+void InstanceShutdown( VulkanContext& context )
+{
+#if defined( _DBG )
+    context.instance.destroyDebugUtilsMessengerEXT( context.debugMessenger );
+#endif
+    context.instance.destroy( context.allocator );
 }
 
 }  // namespace WindEngine::Core::Render

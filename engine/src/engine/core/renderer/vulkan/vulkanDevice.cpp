@@ -13,12 +13,19 @@ std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset", "VK_K
 std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
 #endif
 
-void VulkanDevice::Initialize( VulkanContext& context )
+auto VulkanDevice::Initialize( VulkanContext& context ) -> bool
 {
-    InitializePhysicalDevice( context.instance, context.surface );
+    if ( !InitializePhysicalDevice( context.instance, context.surface ) )
+    {
+        WIND_FATAL( "Failed to find a suitable physical device." )
+        return false;
+    }
+
     InitializeDevice( *context.allocator );
 
     context.device = *this;
+
+    return true;
 }
 
 void VulkanDevice::Shutdown()
@@ -26,7 +33,7 @@ void VulkanDevice::Shutdown()
     device.destroy();
 }
 
-void VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface )
+bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface )
 {
     for ( const auto& pd : instance.enumeratePhysicalDevices() )
     {
@@ -44,10 +51,10 @@ void VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const
 
             indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
 
-            return;
+            return true;
         }
     }
-    WIND_FATAL( "No suitable physical device found." )
+    return false;
 }
 
 void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks& allocator )
@@ -179,10 +186,30 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
             indices.present = ind;
             continue;
         }
-        else if ( physicalDevice.getSurfaceSupportKHR( ind, surfaceKhr ) )
+    }
+    // Second loop in case we have similar queue family indices
+    for ( size_t ind = 0; ind < queueFamilyProps.size(); ++ind )
+    {
+        const auto& queueFamily = queueFamilyProps[ind];
+        // Graphics
+        if ( indices.graphics == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eGraphics )
+        {
+            indices.graphics = ind;
+        }
+        // Compute
+        if ( indices.compute == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eCompute )
+        {
+            indices.compute = ind;
+        }
+        // Transfer
+        if ( indices.transfer == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eTransfer )
+        {
+            indices.transfer = ind;
+        }
+        // Present
+        if ( indices.present == UINT32_MAX && physicalDevice.getSurfaceSupportKHR( ind, surfaceKhr ) )
         {
             indices.present = ind;
-            continue;
         }
     }
 

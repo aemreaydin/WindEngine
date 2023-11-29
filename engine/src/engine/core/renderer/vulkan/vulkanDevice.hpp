@@ -39,11 +39,11 @@ struct VulkanDevice
     PhysicalDeviceInfo physicalDeviceInfo {};
     SwapchainSupportInfo swapchainSupportInfo {};
 
-    void Initialize( VulkanContext& context );
+    auto Initialize( VulkanContext& context ) -> bool;
     void Shutdown();
 
 private:
-    void InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface );
+    auto InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool;
     void InitializeDevice( const vk::AllocationCallbacks& allocator );
 
     static bool IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface );
