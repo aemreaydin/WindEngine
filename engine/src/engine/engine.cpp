@@ -12,7 +12,7 @@ using namespace WindEngine::Core;
 using namespace WindEngine::Core::Memory;
 using namespace WindEngine::Core::Render;
 
-auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
+static auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
 {
     switch ( type )
     {
@@ -48,13 +48,11 @@ auto Engine::Initialize() -> bool
         return false;
     }
 
-    if ( !_window.Initialize() )
+    // TODO: Hard-coded name
+    if ( !_upRenderer->Initialize( "Wind Engine" ) )
     {
         return false;
     }
-
-    // TODO: Hard-coded name
-    _upRenderer->Initialize( "Wind Engine" );
 
     _upApp->Initialize();
 
@@ -94,8 +92,7 @@ void Engine::Shutdown()
     _upApp->Shutdown();
 
     _upRenderer->Shutdown();
-    // Destroy SDL related objects
-    _window.Shutdown();
+
     SDL_Quit();
 }
 

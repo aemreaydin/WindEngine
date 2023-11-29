@@ -4,14 +4,15 @@
 #include "defines.hpp"
 #include "renderer.hpp"
 #include "vulkanContext.hpp"
+#include <SDL_video.h>
 
 namespace WindEngine::Core::Render
 {
 
-class VulkanRenderer : public Renderer
+class VulkanRenderer final : public Renderer
 {
 public:
-    void Initialize( const char* applicationName ) override;
+    auto Initialize( const char* applicationName ) -> bool override;
     void Shutdown() override;
     auto BeginFrame( F64 deltaTime ) -> bool override;
     auto EndFrame( F64 deltaTime ) -> bool override;

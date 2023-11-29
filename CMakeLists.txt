@@ -12,6 +12,8 @@ find_package(sdl2 CONFIG REQUIRED)
 
 MESSAGE(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    #    add_compile_options(-Weverything -Werror -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-weak-vtables -Wno-padded
+    #            -Wno-switch-enum -Wno-global-constructors -Wno-exit-time-destructors)
     add_compile_options(-Wall -Wextra -Werror)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/Wall /WX)

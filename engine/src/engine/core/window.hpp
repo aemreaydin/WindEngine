@@ -21,12 +21,9 @@ class Window
     void OnMouseWheel( AppState& appState ) const;
 
 public:
-    [[nodiscard]] auto Initialize() -> bool;
     void PollEvents( AppState& appState );
-    void Shutdown();
 
 private:
-    SDL_Window* _window { nullptr };
     SDL_Event _currentEvent {};
 };
 
