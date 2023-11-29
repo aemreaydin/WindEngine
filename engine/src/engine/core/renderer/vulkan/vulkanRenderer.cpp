@@ -1,6 +1,6 @@
 #include "vulkanRenderer.hpp"
-#include "instance.hpp"
 #include "logger.hpp"
+#include "vulkanInstance.hpp"
 #include <SDL_vulkan.h>
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -15,38 +15,12 @@ auto VulkanRenderer::Initialize( const char* applicationName ) -> bool
     auto vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>( "vkGetInstanceProcAddr" );
     VULKAN_HPP_DEFAULT_DISPATCHER.init( vkGetInstanceProcAddr );
 
-    _context.window = SDL_CreateWindow( "WindEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900,
-                                        SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
-    if ( _context.window == nullptr )
-    {
-        WIND_FATAL( "Failed to create SDL window." )
-        return false;
-    }
-
-    InstanceInitialize( applicationName, _context );
-
-    if ( !SDL_Vulkan_CreateSurface( _context.window, _context.instance,
-                                    reinterpret_cast<VkSurfaceKHR*>( &_context.surface ) ) )
-    {
-        WIND_FATAL( "Failed to create surface." )
-        return false;
-    }
-
-    if ( !_context.device.Initialize( _context ) )
-    {
-        return false;
-    }
-
-    return true;
+    return _context.Initialize( applicationName );
 }
 
 void VulkanRenderer::Shutdown()
 {
-    _context.device.Shutdown();
-
-    _context.instance.destroy( _context.surface );
-
-    InstanceShutdown( _context );
+    _context.Shutdown();
 
     SDL_DestroyWindow( _context.window );
 }

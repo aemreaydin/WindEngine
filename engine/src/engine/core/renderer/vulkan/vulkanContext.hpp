@@ -18,6 +18,9 @@ struct VulkanContext
 #endif
     vk::SurfaceKHR surface { nullptr };
     VulkanDevice device;
+
+    auto Initialize( const char* applicationName ) -> bool;
+    void Shutdown();
 };
 
 }  // namespace WindEngine::Core::Render

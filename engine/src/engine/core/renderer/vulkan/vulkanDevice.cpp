@@ -8,9 +8,9 @@ namespace WindEngine::Core::Render
 
 // Check for required device extensions
 #if defined( __APPLE__ )
-std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset", "VK_KHR_swapchain" };
+static std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset", "VK_KHR_swapchain" };
 #else
-std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
+static std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
 #endif
 
 auto VulkanDevice::Initialize( VulkanContext& context ) -> bool
@@ -117,7 +117,7 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     const auto queueFamilyProps = physicalDevice.getQueueFamilyProperties();
     for ( size_t ind = 0; ind < queueFamilyProps.size(); ++ind )
     {
-        if ( physicalDevice.getSurfaceSupportKHR( ind, surface ) )
+        if ( physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surface ) )
         {
             supportsPresent = true;
         }
@@ -157,7 +157,7 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
         {
             if ( indices.compute != ind && indices.present != ind && indices.transfer != ind )
             {
-                indices.graphics = ind;
+                indices.graphics = ToU32( ind );
                 continue;
             }
         }
@@ -166,7 +166,7 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
         {
             if ( indices.graphics != ind && indices.present != ind && indices.transfer != ind )
             {
-                indices.compute = ind;
+                indices.compute = ToU32( ind );
                 continue;
             }
         }
@@ -175,15 +175,15 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
         {
             if ( indices.graphics != ind && indices.present != ind && indices.compute != ind )
             {
-                indices.transfer = ind;
+                indices.transfer = ToU32( ind );
                 continue;
             }
         }
         // TODO: I dont Like this Present
         if ( indices.graphics != ind && indices.transfer != ind && indices.compute != ind &&
-             physicalDevice.getSurfaceSupportKHR( ind, surfaceKhr ) )
+             physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) )
         {
-            indices.present = ind;
+            indices.present = ToU32( ind );
             continue;
         }
     }
@@ -194,22 +194,22 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
         // Graphics
         if ( indices.graphics == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eGraphics )
         {
-            indices.graphics = ind;
+            indices.graphics = ToU32( ind );
         }
         // Compute
         if ( indices.compute == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eCompute )
         {
-            indices.compute = ind;
+            indices.compute = ToU32( ind );
         }
         // Transfer
         if ( indices.transfer == UINT32_MAX && queueFamily.queueFlags & vk::QueueFlagBits::eTransfer )
         {
-            indices.transfer = ind;
+            indices.transfer = ToU32( ind );
         }
         // Present
-        if ( indices.present == UINT32_MAX && physicalDevice.getSurfaceSupportKHR( ind, surfaceKhr ) )
+        if ( indices.present == UINT32_MAX && physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) )
         {
-            indices.present = ind;
+            indices.present = ToU32( ind );
         }
     }
 

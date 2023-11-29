@@ -12,6 +12,7 @@ enum class RendererTypes
     VULKAN,
     DIRECTX
 };
+
 constexpr auto kDefaultRenderer = RendererTypes::VULKAN;
 
 class Renderer

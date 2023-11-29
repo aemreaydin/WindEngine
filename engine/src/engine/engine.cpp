@@ -12,7 +12,7 @@ using namespace WindEngine::Core;
 using namespace WindEngine::Core::Memory;
 using namespace WindEngine::Core::Render;
 
-auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
+static auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
 {
     switch ( type )
     {
