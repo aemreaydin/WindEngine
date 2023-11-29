@@ -1,23 +1,32 @@
 #include "vulkanRenderer.hpp"
 #include "instance.hpp"
+#include <SDL_vulkan.h>
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 namespace WindEngine::Core::Render
 {
 
-void VulkanRenderer::Initialize( const char* applicationName )
+void VulkanRenderer::Initialize( const char* applicationName, SDL_Window* window )
 {
     // Initialize the vulkan-hpp dispatcher
     vk::DynamicLoader dl;
     auto vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>( "vkGetInstanceProcAddr" );
     VULKAN_HPP_DEFAULT_DISPATCHER.init( vkGetInstanceProcAddr );
 
-    InstanceInitialize( applicationName, _context );
+    InstanceInitialize( window, applicationName, _context );
+
+    // TODO: Might fail
+    SDL_Vulkan_CreateSurface( window, _context.instance, reinterpret_cast<VkSurfaceKHR*>( &_context.surface ) );
+
+    _context.device.Initialize( _context );
 }
 
 void VulkanRenderer::Shutdown()
 {
+    _context.device.Shutdown();
+
+    _context.instance.destroy( _context.surface );
 #if defined( _DBG )
     _context.instance.destroyDebugUtilsMessengerEXT( _context.debugMessenger );
 #endif

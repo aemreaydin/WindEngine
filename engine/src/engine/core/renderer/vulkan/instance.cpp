@@ -65,7 +65,7 @@ void AddRequestedExtension( const char* requestedExtensionName, std::vector<cons
     WIND_WARN( "Failed to find extension {}." )
 }
 
-void InstanceInitialize( const char* applicationName, VulkanContext& context )
+void InstanceInitialize( SDL_Window* window, const char* applicationName, VulkanContext& context )
 {
     const vk::ApplicationInfo appInfo {
         .pApplicationName = applicationName,
@@ -76,7 +76,11 @@ void InstanceInitialize( const char* applicationName, VulkanContext& context )
     };
 
     vk::InstanceCreateFlags flags {};
-    std::vector<const char*> enabledExtensions;
+    U32 numSDLExtensions {};
+    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, nullptr );
+    std::vector<const char*> enabledExtensions( numSDLExtensions );
+    SDL_Vulkan_GetInstanceExtensions( window, &numSDLExtensions, enabledExtensions.data() );
+    
 #if defined( __APPLE__ )
     flags = vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR;
     AddRequestedExtension( VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, enabledExtensions );

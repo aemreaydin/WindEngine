@@ -54,7 +54,7 @@ auto Engine::Initialize() -> bool
     }
 
     // TODO: Hard-coded name
-    _upRenderer->Initialize( "Wind Engine" );
+    _upRenderer->Initialize( "Wind Engine", _window.GetSDLWindow() );
 
     _upApp->Initialize();
 

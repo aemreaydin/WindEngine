@@ -2,6 +2,7 @@
 #define WINDENGINE_RENDERER_HPP
 
 #include "defines.hpp"
+#include <SDL.h>
 
 namespace WindEngine::Core::Render
 {
@@ -16,7 +17,7 @@ constexpr auto kDefaultRenderer = RendererTypes::VULKAN;
 class Renderer
 {
 public:
-    virtual void Initialize( const char* applicationName ) = 0;
+    virtual void Initialize( const char* applicationName, SDL_Window* window ) = 0;
     virtual void Shutdown() = 0;
     virtual auto BeginFrame( F64 deltaTime ) -> bool = 0;
     virtual auto EndFrame( F64 deltaTime ) -> bool = 0;

@@ -124,4 +124,9 @@ void Window::OnMouseWheel( [[maybe_unused]] AppState& appState ) const
     WIND_DEBUG( "Mouse Position: {}-{}", mouseX, mouseY )
 }
 
+auto Window::GetSDLWindow() const -> SDL_Window*
+{
+    return _window;
+}
+
 }  // namespace WindEngine::Core

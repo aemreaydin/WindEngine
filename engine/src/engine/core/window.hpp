@@ -25,6 +25,8 @@ public:
     void PollEvents( AppState& appState );
     void Shutdown();
 
+    [[nodiscard]] auto GetSDLWindow() const -> SDL_Window*;
+
 private:
     SDL_Window* _window { nullptr };
     SDL_Event _currentEvent {};

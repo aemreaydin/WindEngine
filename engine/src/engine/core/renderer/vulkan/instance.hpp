@@ -2,6 +2,7 @@
 #define WINDENGINE_INSTANCE_HPP
 
 #include "defines.hpp"
+#include <SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
 
 namespace WindEngine::Core::Render
@@ -10,7 +11,7 @@ namespace WindEngine::Core::Render
 struct VulkanContext;
 
 void AddRequestedExtension( const char* requestedExtensionName, std::vector<const char*>& enabledExtensionNames );
-void InstanceInitialize( const char* applicationName, VulkanContext& context );
+void InstanceInitialize( SDL_Window* window, const char* applicationName, VulkanContext& context );
 
 }  // namespace WindEngine::Core::Render
 
