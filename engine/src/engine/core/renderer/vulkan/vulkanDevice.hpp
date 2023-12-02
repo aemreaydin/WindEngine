@@ -2,6 +2,7 @@
 #define WINDENGINE_VULKANDEVICE_HPP
 
 #include "defines.hpp"
+#include <map>
 #include <vulkan/vulkan.hpp>
 
 namespace WindEngine::Core::Render
@@ -35,6 +36,12 @@ struct VulkanDevice
 {
     vk::PhysicalDevice physicalDevice { nullptr };
     vk::Device device { nullptr };
+
+    vk::Queue graphicsQueue { nullptr };
+    vk::Queue computeQueue { nullptr };
+    vk::Queue transferQueue { nullptr };
+    vk::Queue presentQueue { nullptr };
+
     QueueFamilyIndices indices {};
     PhysicalDeviceInfo physicalDeviceInfo {};
     SwapchainSupportInfo swapchainSupportInfo {};
