@@ -49,6 +49,14 @@ bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const
 
             indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
 
+            WIND_INFO( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
+            WIND_INFO( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) )
+            for ( size_t ind = 0; ind != physicalDeviceInfo.memory.memoryHeapCount; ++ind )
+            {
+                const auto& memoryHeap = physicalDeviceInfo.memory.memoryHeaps[ind];
+                WIND_INFO( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0f / 1024.0f / 1024.0f,
+                           vk::to_string( memoryHeap.flags ) )
+            }
             return true;
         }
     }
@@ -77,6 +85,11 @@ void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
     };
     device = physicalDevice.createDevice( deviceInfo, allocator );
     VULKAN_HPP_DEFAULT_DISPATCHER.init( device );
+
+    graphicsQueue = device.getQueue( indices.graphics, 0 );
+    computeQueue = device.getQueue( indices.compute, 0 );
+    transferQueue = device.getQueue( indices.transfer, 0 );
+    presentQueue = device.getQueue( indices.present, 0 );
 }
 
 bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface )
@@ -86,7 +99,7 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     if ( pdProps.deviceType != vk::PhysicalDeviceType::eDiscreteGpu &&
          pdProps.deviceType != vk::PhysicalDeviceType::eIntegratedGpu )
     {
-        WIND_ERROR( "{} is not discrete or integrated.", *pdProps.deviceName )
+        WIND_ERROR( "{} is not discrete or integrated.", std::string_view( pdProps.deviceName ) )
         return false;
     }
 
@@ -105,7 +118,7 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
                  return strcmp( ext, extension.extensionName ) == 0;
              } ) == deviceExtensions.end() )
         {
-            WIND_ERROR( "{} does not support {}.", *pdProps.deviceName, ext )
+            WIND_ERROR( "{} does not support {}.", std::string_view( pdProps.deviceName ), ext )
             return false;
         }
     }
@@ -134,7 +147,7 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     }
     if ( !( supportsTransfer && supportsCompute && supportsGraphics && supportsPresent ) )
     {
-        WIND_ERROR( "{} does not have support for required queues.", *pdProps.deviceName )
+        WIND_ERROR( "{} does not have support for required queues.", std::string_view( pdProps.deviceName ) )
         return false;
     }
 
@@ -177,7 +190,6 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
                 continue;
             }
         }
-        // TODO: I dont Like this Present
         if ( indices.graphics != ind && indices.transfer != ind && indices.compute != ind &&
              physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) )
         {
