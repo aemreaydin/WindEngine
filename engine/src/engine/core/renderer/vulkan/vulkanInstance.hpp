@@ -15,7 +15,7 @@ struct VulkanInstance
 #endif
 
     void Initialize( const char* applicationName, SDL_Window* window, vk::AllocationCallbacks* allocator );
-    void Shutdown( vk::AllocationCallbacks* allocator );
+    void Destroy( vk::AllocationCallbacks* allocator );
 };
 
 }  // namespace WindEngine::Core::Render

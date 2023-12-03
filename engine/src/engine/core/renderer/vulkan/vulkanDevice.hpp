@@ -9,6 +9,7 @@ namespace WindEngine::Core::Render
 {
 
 struct VulkanContext;
+struct VulkanSwapchain;
 
 struct QueueFamilyIndices
 {
@@ -23,6 +24,8 @@ struct PhysicalDeviceInfo
     vk::PhysicalDeviceFeatures features {};
     vk::PhysicalDeviceMemoryProperties memory {};
     vk::PhysicalDeviceProperties properties {};
+
+    [[nodiscard]] auto FindMemoryIndex( U32 memoryTypeBits, vk::MemoryPropertyFlags requiredFlags ) const -> U32;
 };
 
 struct SwapchainSupportInfo
@@ -45,18 +48,24 @@ struct VulkanDevice
     QueueFamilyIndices indices {};
     PhysicalDeviceInfo physicalDeviceInfo {};
     SwapchainSupportInfo swapchainSupportInfo {};
+    vk::Format depthFormat {};
 
-    auto Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
-                     const vk::AllocationCallbacks* allocator ) -> bool;
-    void Shutdown();
+    [[nodiscard]] auto Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
+                                   const vk::AllocationCallbacks* allocator ) -> bool;
+    void Destroy();
+
+    [[nodiscard]] auto AreGraphicsAndPresentSharing() const -> bool;
 
 private:
-    auto InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool;
+    [[nodiscard]] auto InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool;
     void InitializeDevice( const vk::AllocationCallbacks* allocator );
 
-    static bool IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface );
-    static QueueFamilyIndices FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
-                                                              const vk::SurfaceKHR& surfaceKhr );
+    [[nodiscard]] static bool IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice,
+                                                        const vk::SurfaceKHR& surface );
+    [[nodiscard]] static QueueFamilyIndices FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
+                                                                            const vk::SurfaceKHR& surfaceKhr );
+
+    [[nodiscard]] auto FindDepthFormat() -> vk::Format;
 };
 
 }  // namespace WindEngine::Core::Render

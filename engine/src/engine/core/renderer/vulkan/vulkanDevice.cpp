@@ -1,6 +1,7 @@
 #include "vulkanDevice.hpp"
 #include "assert.hpp"
 #include "logger.hpp"
+#include "vulkanSwapchain.hpp"
 
 namespace WindEngine::Core::Render
 {
@@ -11,6 +12,23 @@ static std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset"
 #else
 static std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
 #endif
+
+auto PhysicalDeviceInfo::FindMemoryIndex( U32 memoryTypeBits, vk::MemoryPropertyFlags requiredFlags ) const -> U32
+{
+    for ( size_t ind = 0; ind < memory.memoryTypeCount; ++ind )
+    {
+        const auto isRequiredMemoryType = ( memoryTypeBits & ( 1 << ind ) ) != 0U;
+        const auto propertyFlags = memory.memoryTypes[ind].propertyFlags;
+        const auto hasRequiredProperties = ( propertyFlags & requiredFlags ) == requiredFlags;
+
+        if ( isRequiredMemoryType && hasRequiredProperties )
+        {
+            return ind;
+        }
+    }
+    WIND_FATAL( "Failed to find a suitable memory index." )
+    throw std::runtime_error( "Failed to find a suitable memory index." );  // TODO
+}
 
 auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
                                const vk::AllocationCallbacks* allocator ) -> bool
@@ -26,9 +44,14 @@ auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKH
     return true;
 }
 
-void VulkanDevice::Shutdown()
+void VulkanDevice::Destroy()
 {
     device.destroy();
+}
+
+auto VulkanDevice::AreGraphicsAndPresentSharing() const -> bool
+{
+    return indices.graphics == indices.present;
 }
 
 bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface )
@@ -48,6 +71,8 @@ bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const
             };
 
             indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
+
+            depthFormat = FindDepthFormat();
 
             WIND_INFO( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
             WIND_INFO( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) )
@@ -228,6 +253,24 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
                   "Failed to assign an index to a queue." );
 
     return indices;
+}
+
+auto VulkanDevice::FindDepthFormat() -> vk::Format
+{
+    auto formatProperties = physicalDevice.getFormatProperties( vk::Format::eD32SfloatS8Uint );
+    if ( formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment )
+    {
+        return vk::Format::eD32SfloatS8Uint;
+    }
+
+    formatProperties = physicalDevice.getFormatProperties( vk::Format::eD24UnormS8Uint );
+    if ( formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment )
+    {
+        return vk::Format::eD24UnormS8Uint;
+    }
+
+    WIND_FATAL( "Failed to find a suitable depth format." );
+    throw std::runtime_error( "Failed to find a suitable format." );  // TODO
 }
 
 }  // namespace WindEngine::Core::Render

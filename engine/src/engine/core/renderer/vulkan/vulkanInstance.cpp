@@ -2,7 +2,6 @@
 #include <logger.hpp>
 #include <vulkan/vulkan_extension_inspection.hpp>
 #include <vulkan/vulkan_static_assertions.hpp>
-#include <vulkanContext.hpp>
 
 // #if defined( _DBG )
 // constexpr auto kIncludeValidation = false;
@@ -124,7 +123,7 @@ void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window
 #endif
 }
 
-void VulkanInstance::Shutdown( vk::AllocationCallbacks* allocator )
+void VulkanInstance::Destroy( vk::AllocationCallbacks* allocator )
 {
 #if defined( _DBG )
     instance.destroyDebugUtilsMessengerEXT( debugMessenger );
