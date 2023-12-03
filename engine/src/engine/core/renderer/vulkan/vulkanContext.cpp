@@ -17,7 +17,6 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
     if ( window == nullptr )
     {
         WIND_FATAL( "Failed to create SDL window." )
-        return false;
     }
 
     instance.Initialize( applicationName, window, allocator );
@@ -25,7 +24,6 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
     if ( !SDL_Vulkan_CreateSurface( window, GetInstance(), reinterpret_cast<VkSurfaceKHR*>( &surface ) ) )
     {
         WIND_FATAL( "Failed to create surface." )
-        return false;
     }
 
     if ( !device.Initialize( GetInstance(), surface, allocator ) )
