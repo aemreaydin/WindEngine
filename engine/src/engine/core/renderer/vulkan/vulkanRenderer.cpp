@@ -27,11 +27,23 @@ void VulkanRenderer::Shutdown()
 
 auto VulkanRenderer::BeginFrame( [[maybe_unused]] F64 deltaTime ) -> bool
 {
+    //    auto optionalIndex = _context.swapchain.AcquireNextImage( 0, nullptr, nullptr );
+    //    if ( !optionalIndex.has_value() )
+    //    {
+    //        _context.swapchain.Recreate( _context.surface, _context.framebufferWidth, _context.framebufferHeight );
+    //        return false;
+    //    }
+    //    _context.frameData.imageIndex = *optionalIndex;
     return true;
 }
 
 auto VulkanRenderer::EndFrame( [[maybe_unused]] F64 deltaTime ) -> bool
 {
+    //    if ( !_context.swapchain.Present( nullptr, _context.frameData.imageIndex ) )
+    //    {
+    //        _context.swapchain.Recreate( _context.surface, _context.framebufferWidth, _context.framebufferHeight );
+    //        return false;
+    //    }
     return true;
 }
 
