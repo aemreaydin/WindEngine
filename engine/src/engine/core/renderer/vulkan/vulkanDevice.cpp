@@ -27,7 +27,6 @@ auto PhysicalDeviceInfo::FindMemoryIndex( U32 memoryTypeBits, vk::MemoryProperty
         }
     }
     WIND_FATAL( "Failed to find a suitable memory index." )
-    throw std::runtime_error( "Failed to find a suitable memory index." );  // TODO
 }
 
 auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
@@ -36,7 +35,6 @@ auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKH
     if ( !InitializePhysicalDevice( instance, surface ) )
     {
         WIND_FATAL( "Failed to find a suitable physical device." )
-        return false;
     }
 
     InitializeDevice( allocator );
@@ -270,7 +268,6 @@ auto VulkanDevice::FindDepthFormat() -> vk::Format
     }
 
     WIND_FATAL( "Failed to find a suitable depth format." );
-    throw std::runtime_error( "Failed to find a suitable format." );  // TODO
 }
 
 }  // namespace WindEngine::Core::Render

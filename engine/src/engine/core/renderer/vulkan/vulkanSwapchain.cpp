@@ -1,5 +1,5 @@
 #include "vulkanSwapchain.hpp"
-#include "vulkanDevice.hpp"
+#include "logger.hpp"
 
 namespace WindEngine::Core::Render
 {
@@ -42,7 +42,7 @@ auto VulkanSwapchain::AcquireNextImage( U64 timeout, vk::Semaphore semaphore, vk
     {
         return { imageIndex };
     }
-    throw std::runtime_error( "Failed to acquire image." );
+    WIND_FATAL( "Failed to acquire image." );
 }
 
 auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
@@ -64,7 +64,7 @@ auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
     {
         return true;
     }
-    throw std::runtime_error( "Failed to present image." );
+    WIND_FATAL( "Failed to present image." );
 }
 
 auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 height ) -> bool
