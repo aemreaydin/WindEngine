@@ -3,11 +3,17 @@
 
 #include "vulkanDevice.hpp"
 #include "vulkanInstance.hpp"
+#include "vulkanSwapchain.hpp"
 #include <SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
 
 namespace WindEngine::Core::Render
 {
+
+struct FrameData
+{
+    U32 imageIndex;
+};
 
 struct VulkanContext
 {
@@ -15,14 +21,23 @@ struct VulkanContext
     vk::AllocationCallbacks* allocator { nullptr };
     vk::SurfaceKHR surface { nullptr };
 
-    VulkanInstance instance;
-    VulkanDevice device;
+    VulkanInstance instance {};
+    VulkanDevice device {};
+    VulkanSwapchain swapchain;
+
+    U32 framebufferWidth {};
+    U32 framebufferHeight {};
+
+    FrameData frameData {};
+
+    VulkanContext();
 
     auto Initialize( const char* applicationName ) -> bool;
     void Shutdown();
 
-    auto GetInstance() const -> vk::Instance;
-    auto GetDevice() const -> vk::Device;
+    auto GetInstance() const -> const vk::Instance&;
+    auto GetDevice() const -> const vk::Device&;
+    auto GetSwapchain() const -> const vk::SwapchainKHR&;
 };
 
 }  // namespace WindEngine::Core::Render

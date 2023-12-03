@@ -6,6 +6,10 @@
 namespace WindEngine::Core::Render
 {
 
+VulkanContext::VulkanContext() : swapchain( device, allocator )
+{
+}
+
 auto VulkanContext::Initialize( const char* applicationName ) -> bool
 {
     window = SDL_CreateWindow( "WindEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900,
@@ -29,28 +33,36 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
         return false;
     }
 
+    swapchain.Initialize( surface, framebufferWidth, framebufferHeight );
     return true;
 }
 
 void VulkanContext::Shutdown()
 {
-    device.Shutdown();
+    swapchain.Destroy();
+
+    device.Destroy();
 
     GetInstance().destroy( surface );
 
-    instance.Shutdown( allocator );
+    instance.Destroy( allocator );
 
     SDL_DestroyWindow( window );
 }
 
-auto VulkanContext::GetInstance() const -> vk::Instance
+auto VulkanContext::GetInstance() const -> const vk::Instance&
 {
     return instance.instance;
 }
 
-auto VulkanContext::GetDevice() const -> vk::Device
+auto VulkanContext::GetDevice() const -> const vk::Device&
 {
     return device.device;
+}
+
+auto VulkanContext::GetSwapchain() const -> const vk::SwapchainKHR&
+{
+    return swapchain.swapchain;
 }
 
 }  // namespace WindEngine::Core::Render
