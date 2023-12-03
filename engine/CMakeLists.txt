@@ -1,6 +1,7 @@
 SET(THIRD_PARTY_LIBS
-        Vulkan::Vulkan
         spdlog::spdlog
+        Vulkan::Vulkan
+        glm::glm
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
 SET(COMPILE_DEFINITIONS
@@ -15,7 +16,7 @@ SET(COMPILE_DEFINITIONS
 add_library(WindVulkan SHARED ${Wind_Engine_Src})
 target_link_libraries(WindVulkan PUBLIC ${THIRD_PARTY_LIBS})
 if (APPLE)
-    LIST(APPEND COMPILE_DEFINITIONS VK_USE_PLATFORM_MACOS_MVK)
+    LIST(APPEND COMPILE_DEFINITIONS VK_USE_PLATFORM_MACOS_MVK GLM_FORCE_RADIANS GLM_FORCE_DEPTH_ZERO_TO_ONE)
 endif ()
 target_compile_definitions(WindVulkan PUBLIC ${COMPILE_DEFINITIONS})
 # TODO

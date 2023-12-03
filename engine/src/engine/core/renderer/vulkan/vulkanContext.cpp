@@ -6,7 +6,7 @@
 namespace WindEngine::Core::Render
 {
 
-VulkanContext::VulkanContext() : swapchain( device, allocator )
+VulkanContext::VulkanContext() : swapchain( device, allocator ), renderPass( device, allocator )
 {
 }
 
@@ -32,11 +32,13 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
     }
 
     swapchain.Initialize( surface, framebufferWidth, framebufferHeight );
+    renderPass.Initialize( swapchain.imageFormat.format, device.depthFormat );
     return true;
 }
 
 void VulkanContext::Shutdown()
 {
+    renderPass.Destroy();
     swapchain.Destroy();
 
     device.Destroy();
