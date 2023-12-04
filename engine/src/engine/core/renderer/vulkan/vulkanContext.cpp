@@ -16,12 +16,12 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
                                SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
     if ( window == nullptr )
     {
-        WIND_FATAL( "Failed to create SDL window." )
+        WIND_FATAL( "Failed to create SDL window. {}", SDL_GetError() )
     }
 
     instance.Initialize( applicationName, window, allocator );
 
-    if ( !SDL_Vulkan_CreateSurface( window, GetInstance(), reinterpret_cast<VkSurfaceKHR*>( &surface ) ) )
+    if ( SDL_Vulkan_CreateSurface( window, GetInstance(), reinterpret_cast<VkSurfaceKHR*>( &surface ) ) != SDL_TRUE )
     {
         WIND_FATAL( "Failed to create surface." )
     }

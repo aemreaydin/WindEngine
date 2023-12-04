@@ -6,7 +6,7 @@
 #include "core/memory/linearAllocator.hpp"
 #include "engine.hpp"
 
-auto CreateApp() -> std::unique_ptr<WindEngine::App>;
+auto G_CREATE_APP() -> std::unique_ptr<WindEngine::App>;
 
 auto main() -> int
 {
@@ -16,7 +16,7 @@ auto main() -> int
     allocator.Init();
     
     {
-        WindEngine::Engine engine { CreateApp() };
+        WindEngine::Engine engine { G_CREATE_APP() };
         engine.Run();
     }
 

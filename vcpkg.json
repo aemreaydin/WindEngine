@@ -1,0 +1,5 @@
+{
+  "dependencies": ["spdlog", {"name":  "sdl2", "features": ["vulkan"]}, "glm"],
+  "name": "wind-engine",
+  "version": "0.0.1"
+}
