@@ -73,7 +73,7 @@ auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
     const auto& formats = _device->swapchainSupportInfo.surfaceFormats;
     const auto& presentModes = _device->swapchainSupportInfo.presentModes;
 
-    auto imageCount = surfaceCapabilities.minImageCount + 1;
+    auto minImageCount = surfaceCapabilities.minImageCount + 1;
     // maxImageCount = 0 means that there is not limit on the number of images
     if ( surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount )
     {
@@ -120,7 +120,7 @@ auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
 
     const auto swapchainInfo = vk::SwapchainCreateInfoKHR {
         .surface = surface,
-        .minImageCount = imageCount,
+        .minImageCount = minImageCount,
         .imageFormat = imageFormat.format,
         .imageColorSpace = imageFormat.colorSpace,
         .imageExtent = imageExtent,
@@ -155,6 +155,7 @@ auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
                                                                .layerCount = 1 } };
         imageViews[ind] = _device->device.createImageView( imageViewInfo, _allocator );
     }
+    imageCount = ToU32( images.size() );
 
     const auto depthImageInfo = VulkanImageCreateInfo { .aspectFlags = vk::ImageAspectFlagBits::eDepth,
                                                         .extent = { imageExtent.width, imageExtent.height, 1 },

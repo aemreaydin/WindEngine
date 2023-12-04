@@ -1,8 +1,10 @@
 #ifndef WINDENGINE_VULKANCONTEXT_HPP
 #define WINDENGINE_VULKANCONTEXT_HPP
 
+#include "vulkanCommandBuffer.hpp"
 #include "vulkanDevice.hpp"
 #include "vulkanInstance.hpp"
+#include "vulkanRenderPass.hpp"
 #include "vulkanSwapchain.hpp"
 #include <SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
@@ -24,6 +26,9 @@ struct VulkanContext
     VulkanInstance instance {};
     VulkanDevice device {};
     VulkanSwapchain swapchain;
+    VulkanRenderPass renderPass;
+    std::vector<VulkanCommandBuffer> graphicsCommandBuffers {};
+    vk::CommandPool graphicsCommandPool;
 
     U32 framebufferWidth {};
     U32 framebufferHeight {};

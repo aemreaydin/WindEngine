@@ -9,6 +9,7 @@ project(WindEngine VERSION 0.0.1 DESCRIPTION "A Game Engine" LANGUAGES CXX)
 find_package(Vulkan REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(sdl2 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 MESSAGE(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
