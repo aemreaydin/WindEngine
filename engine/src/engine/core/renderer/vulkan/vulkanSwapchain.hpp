@@ -16,6 +16,7 @@ struct VulkanSwapchain : public VulkanHandle
     vk::SwapchainKHR swapchain {};
     std::vector<vk::Image> images {};
     std::vector<vk::ImageView> imageViews {};
+    U32 imageCount {};
     VulkanImage depthImage;
 
     vk::SurfaceFormatKHR imageFormat {};

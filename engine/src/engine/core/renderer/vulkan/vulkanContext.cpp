@@ -33,11 +33,32 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
 
     swapchain.Initialize( surface, framebufferWidth, framebufferHeight );
     renderPass.Initialize( swapchain.imageFormat.format, device.depthFormat );
+
+    // TODO? Abstract away
+    // Command pool and command buffers
+    const auto poolInfo = vk::CommandPoolCreateInfo {
+        .flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+        .queueFamilyIndex = device.indices.graphics,
+    };
+    graphicsCommandPool = GetDevice().createCommandPool( poolInfo, allocator );
+    graphicsCommandBuffers.resize( swapchain.imageCount );
+    for ( auto& buffer : graphicsCommandBuffers )
+    {
+        buffer.Allocate( GetDevice(), graphicsCommandPool, true );
+    }
+    WIND_INFO( "Allocated {} graphics command buffers.", graphicsCommandBuffers.size() );
+
     return true;
 }
 
 void VulkanContext::Shutdown()
 {
+    for ( auto& buffer : graphicsCommandBuffers )
+    {
+        buffer.Free( GetDevice(), graphicsCommandPool );
+    }
+    GetDevice().destroy( graphicsCommandPool, allocator );
+
     renderPass.Destroy();
     swapchain.Destroy();
 
