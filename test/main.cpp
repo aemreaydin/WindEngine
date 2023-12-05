@@ -32,7 +32,7 @@ public:
     }
 };
 
-auto CreateApp() -> std::unique_ptr<WindEngine::App>
+auto G_CREATE_APP() -> std::unique_ptr<WindEngine::App>
 {
     return std::make_unique<WindEditorApp>();
 }
