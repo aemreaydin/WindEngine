@@ -35,6 +35,13 @@ void Window::PollEvents( AppState& appState )
             OnMouseWheel( appState );
             break;
         }
+        case SDL_WINDOWEVENT: {
+            if ( _currentEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED )
+            {
+                appState.shouldResize = true;
+            }
+            break;
+        }
         }
 
         break;
@@ -43,7 +50,7 @@ void Window::PollEvents( AppState& appState )
 
 void Window::OnKeyPress( AppState& appState ) const
 {
-    WIND_DEBUG( "KeyDown: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
+    WIND_TRACE( "KeyDown: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
     switch ( _currentEvent.key.keysym.sym )
     {
     case SDLK_ESCAPE:
@@ -60,7 +67,7 @@ void Window::OnKeyPress( AppState& appState ) const
 
 void Window::OnKeyRelease( [[maybe_unused]] AppState& appState ) const
 {
-    WIND_DEBUG( "KeyUp: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
+    WIND_TRACE( "KeyUp: {}", SDL_GetKeyName( _currentEvent.key.keysym.sym ) )
 }
 
 void Window::OnButtonPress( [[maybe_unused]] AppState& appState ) const
@@ -68,10 +75,10 @@ void Window::OnButtonPress( [[maybe_unused]] AppState& appState ) const
     switch ( _currentEvent.button.button )
     {
     case SDL_BUTTON_LEFT:
-        WIND_DEBUG( "Left Mouse Button Pressed." )
+        WIND_TRACE( "Left Mouse Button Pressed." )
         break;
     case SDL_BUTTON_RIGHT:
-        WIND_DEBUG( "Right Mouse Button Pressed." )
+        WIND_TRACE( "Right Mouse Button Pressed." )
         break;
     }
 }
@@ -81,24 +88,24 @@ void Window::OnButtonRelease( [[maybe_unused]] AppState& appState ) const
     switch ( _currentEvent.button.button )
     {
     case SDL_BUTTON_LEFT:
-        WIND_DEBUG( "Left Mouse Button Released." )
+        WIND_TRACE( "Left Mouse Button Released." )
         break;
     case SDL_BUTTON_RIGHT:
-        WIND_DEBUG( "Right Mouse Button Released." )
+        WIND_TRACE( "Right Mouse Button Released." )
         break;
     }
 }
 
 void Window::OnMouseMove( [[maybe_unused]] AppState& appState ) const
 {
-    WIND_DEBUG( "Mouse Wheel: {}-{}", _currentEvent.wheel.x, _currentEvent.wheel.y )
+    WIND_TRACE( "Mouse Wheel: {}-{}", _currentEvent.wheel.x, _currentEvent.wheel.y )
 }
 
 void Window::OnMouseWheel( [[maybe_unused]] AppState& appState ) const
 {
     const auto mouseX = _currentEvent.motion.x;
     const auto mouseY = _currentEvent.motion.y;
-    WIND_DEBUG( "Mouse Position: {}-{}", mouseX, mouseY )
+    WIND_TRACE( "Mouse Position: {}-{}", mouseX, mouseY )
 }
 
 }  // namespace WindEngine::Core

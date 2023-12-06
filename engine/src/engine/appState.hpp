@@ -21,6 +21,7 @@ struct AppState
     bool isRunning { false };
     bool isSuspended { false };
     bool isFrameRateFixed { false };
+    bool shouldResize { false };
 
     F64 deltaTime {};
     U64 frameStartTime {};

@@ -10,10 +10,10 @@ VulkanContext::VulkanContext() : swapchain( device, allocator ), renderPass( dev
 {
 }
 
-auto VulkanContext::Initialize( const char* applicationName ) -> bool
+auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 height ) -> bool
 {
-    window = SDL_CreateWindow( "WindEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900,
-                               SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
+    window = SDL_CreateWindow( "WindEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, static_cast<int>( width ),
+                               static_cast<int>( height ), SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
     if ( window == nullptr )
     {
         WIND_FATAL( "Failed to create SDL window. {}", SDL_GetError() )
@@ -46,13 +46,40 @@ auto VulkanContext::Initialize( const char* applicationName ) -> bool
     {
         buffer.Allocate( GetDevice(), graphicsCommandPool, true );
     }
-    WIND_INFO( "Allocated {} graphics command buffers.", graphicsCommandBuffers.size() );
+    WIND_INFO( "Allocated {} graphics command buffers.", graphicsCommandBuffers.size() )
+
+    RecreateFramebuffers( width, height );
+
+    // TODO Move from here
+    for ( auto& frame : frames )
+    {
+        const auto fenceInfo = vk::FenceCreateInfo {
+            .flags = vk::FenceCreateFlagBits::eSignaled,
+        };
+        frame.renderSemaphore = GetDevice().createSemaphore( {}, allocator );
+        frame.presentSemaphore = GetDevice().createSemaphore( {}, allocator );
+        frame.fence = GetDevice().createFence( fenceInfo, allocator );
+    }
 
     return true;
 }
 
 void VulkanContext::Shutdown()
 {
+    GetDevice().waitIdle();
+
+    for ( auto& frame : frames )
+    {
+        GetDevice().destroy( frame.renderSemaphore, allocator );
+        GetDevice().destroy( frame.presentSemaphore, allocator );
+        GetDevice().destroy( frame.fence, allocator );
+    }
+
+    for ( auto& buffer : framebuffers )
+    {
+        GetDevice().destroy( buffer, allocator );
+    }
+
     for ( auto& buffer : graphicsCommandBuffers )
     {
         buffer.Free( GetDevice(), graphicsCommandPool );
@@ -84,6 +111,34 @@ auto VulkanContext::GetDevice() const -> const vk::Device&
 auto VulkanContext::GetSwapchain() const -> const vk::SwapchainKHR&
 {
     return swapchain.swapchain;
+}
+
+auto VulkanContext::GetCurrentFrame() -> Frame&
+{
+    return frames.at( currentFrame % kFramesInFlight );
+}
+
+void VulkanContext::RecreateFramebuffers( U32 width, U32 height )
+{
+    for ( auto& buffer : framebuffers )
+    {
+        GetDevice().destroy( buffer, allocator );
+    }
+
+    framebufferWidth = width;
+    framebufferHeight = height;
+    framebuffers.resize( swapchain.imageCount );
+    for ( size_t ind = 0; ind < framebuffers.size(); ++ind )
+    {
+        auto attachments = std::vector<vk::ImageView> { swapchain.imageViews[ind], swapchain.depthImage.imageView };
+        const auto framebufferInfo = vk::FramebufferCreateInfo { .renderPass = renderPass.mainRenderPass,
+                                                                 .attachmentCount = ToU32( attachments.size() ),
+                                                                 .pAttachments = attachments.data(),
+                                                                 .width = framebufferWidth,
+                                                                 .height = framebufferHeight,
+                                                                 .layers = 1 };
+        framebuffers[ind] = GetDevice().createFramebuffer( framebufferInfo, allocator );
+    }
 }
 
 }  // namespace WindEngine::Core::Render

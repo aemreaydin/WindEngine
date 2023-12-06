@@ -1,6 +1,8 @@
 #ifndef WINDENGINE_RENDERER_HPP
 #define WINDENGINE_RENDERER_HPP
 
+#include "appConfig.h"
+#include "appState.hpp"
 #include "defines.hpp"
 #include <SDL.h>
 
@@ -18,10 +20,10 @@ constexpr auto kDefaultRenderer = RendererTypes::VULKAN;
 class Renderer
 {
 public:
-    virtual auto Initialize( const char* applicationName ) -> bool = 0;
+    virtual auto Initialize( const AppConfig& config ) -> bool = 0;
     virtual void Shutdown() = 0;
-    virtual auto BeginFrame( F64 deltaTime ) -> bool = 0;
-    virtual auto EndFrame( F64 deltaTime ) -> bool = 0;
+    virtual auto BeginFrame( AppState& state ) -> bool = 0;
+    virtual auto EndFrame( AppState& state ) -> bool = 0;
     virtual void Resize( U16 width, U16 height ) = 0;
 
     Renderer() = default;

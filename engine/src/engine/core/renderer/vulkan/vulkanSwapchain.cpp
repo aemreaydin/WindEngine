@@ -4,8 +4,8 @@
 namespace WindEngine::Core::Render
 {
 
-VulkanSwapchain::VulkanSwapchain( const VulkanDevice& device, vk::AllocationCallbacks* allocator )
-  : VulkanHandle( &device, allocator ), depthImage( &device, allocator )
+VulkanSwapchain::VulkanSwapchain( VulkanDevice& device, vk::AllocationCallbacks* allocator )
+  : VulkanHandle( &device, allocator ), depthImage( device, allocator )
 {
 }
 
@@ -29,6 +29,7 @@ void VulkanSwapchain::Recreate( const vk::SurfaceKHR& surface, U32 width, U32 he
 {
     Destroy();
     Create( surface, width, height );
+    WIND_DEBUG( "Swapchain recreated with size ({},{})", width, height )
 }
 
 auto VulkanSwapchain::AcquireNextImage( U64 timeout, vk::Semaphore semaphore, vk::Fence fence ) -> std::optional<U32>
@@ -42,7 +43,7 @@ auto VulkanSwapchain::AcquireNextImage( U64 timeout, vk::Semaphore semaphore, vk
     {
         return { imageIndex };
     }
-    WIND_FATAL( "Failed to acquire image." );
+    WIND_FATAL( "Failed to acquire image." )
 }
 
 auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
@@ -64,11 +65,12 @@ auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
     {
         return true;
     }
-    WIND_FATAL( "Failed to present image." );
+    WIND_FATAL( "Failed to present image." )
 }
 
-auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 height ) -> bool
+void VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 height )
 {
+    _device->QueryForSwapchainSupportInfo( surface );
     const auto& surfaceCapabilities = _device->swapchainSupportInfo.surfaceCapabilities;
     const auto& formats = _device->swapchainSupportInfo.surfaceFormats;
     const auto& presentModes = _device->swapchainSupportInfo.presentModes;
@@ -93,11 +95,19 @@ auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
     {
         imageFormat = formats[0];
     }
+    WIND_DEBUG( "Selected Format: {}", vk::to_string( imageFormat.format ) )
 
-    auto imageExtent = vk::Extent2D { width, height };
+    vk::Extent2D imageExtent;
     if ( surfaceCapabilities.currentExtent.width != UINT32_MAX )
     {
         imageExtent = surfaceCapabilities.currentExtent;
+    }
+    else
+    {
+        imageExtent = {
+            std::clamp( width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width ),
+            std::clamp( height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height )
+        };
     }
 
     auto imageSharingMode = vk::SharingMode::eExclusive;
@@ -165,8 +175,6 @@ auto VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
                                                         .tiling = vk::ImageTiling::eOptimal,
                                                         .usage = vk::ImageUsageFlagBits::eDepthStencilAttachment };
     depthImage.Initialize( depthImageInfo );
-
-    return true;
 }
 
 }  // namespace WindEngine::Core::Render

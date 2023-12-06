@@ -21,10 +21,10 @@ struct VulkanSwapchain : public VulkanHandle
 
     vk::SurfaceFormatKHR imageFormat {};
 
-    VulkanSwapchain( const VulkanDevice& device, vk::AllocationCallbacks* allocator );
+    VulkanSwapchain( VulkanDevice& device, vk::AllocationCallbacks* allocator );
 
     void Initialize( const vk::SurfaceKHR& surface, U32 width, U32 height );
-    void Destroy();
+    void Destroy() override;
 
     void Recreate( const vk::SurfaceKHR& surface, U32 width, U32 height );
 
@@ -33,7 +33,7 @@ struct VulkanSwapchain : public VulkanHandle
     auto Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool;
 
 private:
-    auto Create( const vk::SurfaceKHR& surface, U32 width, U32 height ) -> bool;
+    void Create( const vk::SurfaceKHR& surface, U32 width, U32 height );
 };
 
 }  // namespace WindEngine::Core::Render

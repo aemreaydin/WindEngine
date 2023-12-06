@@ -13,10 +13,10 @@ struct VulkanRenderPass : public VulkanHandle
 {
     vk::RenderPass mainRenderPass {};
 
-    VulkanRenderPass( const VulkanDevice& device, vk::AllocationCallbacks* allocator );
+    VulkanRenderPass( VulkanDevice& device, vk::AllocationCallbacks* allocator );
 
     void Initialize( const vk::Format& imageFormat, const vk::Format& depthFormat );
-    void Destroy();
+    void Destroy() override;
 
     void BeginRenderPass( const vk::CommandBuffer& commandBuffer, const vk::Framebuffer& framebuffer,
                           const vk::Rect2D& renderArea, const vk::ClearColorValue& colorValue,

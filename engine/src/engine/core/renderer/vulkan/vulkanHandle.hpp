@@ -10,17 +10,21 @@ namespace WindEngine::Core::Render
 
 struct VulkanHandle
 {
-    VulkanHandle( const VulkanDevice* device, vk::AllocationCallbacks* allocator )
+    VulkanHandle( VulkanDevice* device, vk::AllocationCallbacks* allocator )
       : _device( device ), _allocator( allocator )
     {
     }
 
     virtual ~VulkanHandle() = default;
+    VulkanHandle( const VulkanHandle& ) = delete;
+    VulkanHandle( const VulkanHandle&& ) = delete;
+    auto operator=( const VulkanHandle& ) -> VulkanHandle& = delete;
+    auto operator=( const VulkanHandle&& ) -> VulkanHandle& = delete;
 
     virtual void Destroy() = 0;
 
 protected:
-    const VulkanDevice* _device { nullptr };
+    VulkanDevice* _device { nullptr };
     vk::AllocationCallbacks* _allocator { nullptr };
 };
 

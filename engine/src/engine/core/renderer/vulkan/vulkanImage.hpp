@@ -23,13 +23,13 @@ struct VulkanImageCreateInfo
 
 struct VulkanImage : public VulkanHandle
 {
-    VulkanImage( const VulkanDevice* pDevice, vk::AllocationCallbacks* allocator );
+    VulkanImage( VulkanDevice& device, vk::AllocationCallbacks* allocator );
     vk::Image image {};
     vk::ImageView imageView {};
     vk::DeviceMemory deviceMemory {};
 
     void Initialize( const VulkanImageCreateInfo& createInfo );
-    void Destroy();
+    void Destroy() override;
 };
 
 }  // namespace WindEngine::Core::Render

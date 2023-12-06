@@ -1,17 +1,16 @@
 #include "vulkanDevice.hpp"
 #include "assert.hpp"
 #include "logger.hpp"
-#include "vulkanSwapchain.hpp"
-
-namespace WindEngine::Core::Render
-{
 
 // Check for required device extensions
 #if defined( __APPLE__ )
-static std::vector<const char*> requiredExtensions { "VK_KHR_portability_subset", "VK_KHR_swapchain" };
+static const std::vector<const char*> kRequiredExtensions { "VK_KHR_portability_subset", "VK_KHR_swapchain" };
 #else
-static std::vector<const char*> requiredExtensions { "VK_KHR_swapchain" };
+static std::vector<const char*> kRequiredExtensions { "VK_KHR_swapchain" };
 #endif
+
+namespace WindEngine::Core::Render
+{
 
 auto PhysicalDeviceInfo::FindMemoryIndex( U32 memoryTypeBits, vk::MemoryPropertyFlags requiredFlags ) const -> U32
 {
@@ -42,7 +41,7 @@ auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKH
     return true;
 }
 
-void VulkanDevice::Destroy()
+void VulkanDevice::Destroy() const
 {
     device.destroy();
 }
@@ -52,32 +51,37 @@ auto VulkanDevice::AreGraphicsAndPresentSharing() const -> bool
     return indices.graphics == indices.present;
 }
 
-bool VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface )
+void VulkanDevice::QueryForSwapchainSupportInfo( const vk::SurfaceKHR& surface )
 {
-    for ( const auto& pd : instance.enumeratePhysicalDevices() )
+    swapchainSupportInfo = {
+        .presentModes = physicalDevice.getSurfacePresentModesKHR( surface ),
+        .surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR( surface ),
+        .surfaceFormats = physicalDevice.getSurfaceFormatsKHR( surface ),
+    };
+}
+
+auto VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool
+{
+    for ( const auto& iterPhysicalDevice : instance.enumeratePhysicalDevices() )
     {
-        if ( IsPhysicalDeviceSuitable( pd, surface ) )
+        if ( IsPhysicalDeviceSuitable( iterPhysicalDevice, surface ) )
         {
-            physicalDevice = pd;
+            physicalDevice = iterPhysicalDevice;
             physicalDeviceInfo = { .features = physicalDevice.getFeatures(),
                                    .memory = physicalDevice.getMemoryProperties(),
                                    .properties = physicalDevice.getProperties() };
-            swapchainSupportInfo = {
-                .presentModes = physicalDevice.getSurfacePresentModesKHR( surface ),
-                .surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR( surface ),
-                .surfaceFormats = physicalDevice.getSurfaceFormatsKHR( surface ),
-            };
+            QueryForSwapchainSupportInfo( surface );
 
             indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
 
             depthFormat = FindDepthFormat();
 
-            WIND_INFO( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
+            WIND_INFO( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) )
             WIND_INFO( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) )
             for ( size_t ind = 0; ind != physicalDeviceInfo.memory.memoryHeapCount; ++ind )
             {
                 const auto& memoryHeap = physicalDeviceInfo.memory.memoryHeaps[ind];
-                WIND_INFO( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0f / 1024.0f / 1024.0f,
+                WIND_INFO( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0F / 1024.0F / 1024.0F,
                            vk::to_string( memoryHeap.flags ) )
             }
             return true;
@@ -103,8 +107,8 @@ void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
     const auto deviceInfo = vk::DeviceCreateInfo {
         .queueCreateInfoCount = ToU32( queueInfos.size() ),
         .pQueueCreateInfos = queueInfos.data(),
-        .enabledExtensionCount = ToU32( requiredExtensions.size() ),
-        .ppEnabledExtensionNames = requiredExtensions.data(),
+        .enabledExtensionCount = ToU32( kRequiredExtensions.size() ),
+        .ppEnabledExtensionNames = kRequiredExtensions.data(),
     };
     device = physicalDevice.createDevice( deviceInfo, allocator );
     VULKAN_HPP_DEFAULT_DISPATCHER.init( device );
@@ -115,7 +119,8 @@ void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
     presentQueue = device.getQueue( indices.present, 0 );
 }
 
-bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface )
+auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface )
+  -> bool
 {
     // Check Device Types
     const auto pdProps = physicalDevice.getProperties();
@@ -129,15 +134,15 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     // Check format and present mode support
     const auto formats = physicalDevice.getSurfaceFormatsKHR( surface );
     const auto presentModes = physicalDevice.getSurfacePresentModesKHR( surface );
-    if ( formats.size() == 0 || presentModes.size() == 0 )
+    if ( formats.empty() || presentModes.empty() )
     {
         return false;
     }
 
     const auto deviceExtensions = physicalDevice.enumerateDeviceExtensionProperties();
-    for ( const auto& ext : requiredExtensions )
+    for ( const auto& ext : kRequiredExtensions )
     {
-        if ( std::find_if( deviceExtensions.begin(), deviceExtensions.end(), [&]( const auto extension ) {
+        if ( std::find_if( deviceExtensions.begin(), deviceExtensions.end(), [&]( const auto& extension ) {
                  return strcmp( ext, extension.extensionName ) == 0;
              } ) == deviceExtensions.end() )
         {
@@ -147,11 +152,14 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     }
 
     // Check Queue Family Support
-    bool supportsPresent { false }, supportsGraphics { false }, supportsCompute { false }, supportsTransfer { false };
+    bool supportsPresent { false };
+    bool supportsGraphics { false };
+    bool supportsCompute { false };
+    bool supportsTransfer { false };
     const auto queueFamilyProps = physicalDevice.getQueueFamilyProperties();
     for ( size_t ind = 0; ind < queueFamilyProps.size(); ++ind )
     {
-        if ( physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surface ) )
+        if ( physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surface ) == VK_TRUE )
         {
             supportsPresent = true;
         }
@@ -177,8 +185,8 @@ bool VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     return true;
 }
 
-QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
-                                                                 const vk::SurfaceKHR& surfaceKhr )
+auto VulkanDevice::FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
+                                                   const vk::SurfaceKHR& surfaceKhr ) -> QueueFamilyIndices
 {
     const auto queueFamilyProps = physicalDevice.getQueueFamilyProperties();
     QueueFamilyIndices indices {};
@@ -214,7 +222,7 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
             }
         }
         if ( indices.graphics != ind && indices.transfer != ind && indices.compute != ind &&
-             physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) )
+             physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) == VK_TRUE )
         {
             indices.present = ToU32( ind );
             continue;
@@ -240,7 +248,8 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
             indices.transfer = ToU32( ind );
         }
         // Present
-        if ( indices.present == UINT32_MAX && physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) )
+        if ( indices.present == UINT32_MAX &&
+             physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surfaceKhr ) == VK_TRUE )
         {
             indices.present = ToU32( ind );
         }
@@ -253,7 +262,7 @@ QueueFamilyIndices VulkanDevice::FindSuitableQueueFamilyIndices( const vk::Physi
     return indices;
 }
 
-auto VulkanDevice::FindDepthFormat() -> vk::Format
+auto VulkanDevice::FindDepthFormat() const -> vk::Format
 {
     auto formatProperties = physicalDevice.getFormatProperties( vk::Format::eD32SfloatS8Uint );
     if ( formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment )
@@ -267,7 +276,7 @@ auto VulkanDevice::FindDepthFormat() -> vk::Format
         return vk::Format::eD24UnormS8Uint;
     }
 
-    WIND_FATAL( "Failed to find a suitable depth format." );
+    WIND_FATAL( "Failed to find a suitable depth format." )
 }
 
 }  // namespace WindEngine::Core::Render
