@@ -2,11 +2,14 @@
 #include "logger.hpp"
 #include "vulkanDevice.hpp"
 #include "vulkanInstance.hpp"
+#include "vulkanPipeline.hpp"
 
 namespace WindEngine::Core::Render
 {
 
-VulkanContext::VulkanContext() : swapchain( device, allocator ), renderPass( device, allocator )
+VulkanContext::VulkanContext()
+  : swapchain( device, allocator ), renderPass( device, allocator ), graphicsPipeline( device, allocator ),
+    triangleBuffer( device, allocator )
 {
 }
 
@@ -33,6 +36,7 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
 
     swapchain.Initialize( surface, framebufferWidth, framebufferHeight );
     renderPass.Initialize( swapchain.imageFormat.format, device.depthFormat );
+    graphicsPipeline.Initialize( renderPass.mainRenderPass );
 
     // TODO? Abstract away
     // Command pool and command buffers
@@ -61,12 +65,20 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
         frame.fence = GetDevice().createFence( fenceInfo, allocator );
     }
 
+    triangleBuffer.Initialize(
+      { .size = sizeof( Vertex ) * 3,
+        .usageFlags = vk::BufferUsageFlagBits::eVertexBuffer,
+        .memoryFlags = vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible } );
+    triangleBuffer.MapMemory( triangle );
+
     return true;
 }
 
 void VulkanContext::Shutdown()
 {
     GetDevice().waitIdle();
+
+    triangleBuffer.Destroy();
 
     for ( auto& frame : frames )
     {
@@ -86,6 +98,7 @@ void VulkanContext::Shutdown()
     }
     GetDevice().destroy( graphicsCommandPool, allocator );
 
+    graphicsPipeline.Destroy();
     renderPass.Destroy();
     swapchain.Destroy();
 

@@ -62,7 +62,7 @@ auto VulkanRenderer::BeginFrame( AppState& state ) -> bool
     cmd.Begin();
 
     const auto viewportInfo = vk::Viewport { .x = 0.0F,
-                                             .y = 0.0F,
+                                             .y = -static_cast<F32>( _context.framebufferHeight ),
                                              .width = static_cast<F32>( _context.framebufferWidth ),
                                              .height = static_cast<F32>( _context.framebufferHeight ),
                                              .minDepth = 0.0F,
@@ -75,9 +75,10 @@ auto VulkanRenderer::BeginFrame( AppState& state ) -> bool
     cmd.commandBuffer.setScissor( 0, scissor );
 
     const vk::Rect2D rect2D { { 0, 0 }, { _context.framebufferWidth, _context.framebufferHeight } };
-    const vk::ClearColorValue colorValue { .float32 = { { 1.0F, 0.0F, 0.0F, 1.0F } } };
+    const vk::ClearColorValue colorValue { .float32 = { { 0.0F, 0.5F, 0.0F, 1.0F } } };
     const vk::ClearDepthStencilValue depthStencilValue { .depth = 1.F, .stencil = 0 };
     _context.renderPass.BeginRenderPass( cmd.commandBuffer, framebuffer, rect2D, colorValue, depthStencilValue );
+    cmd.commandBuffer.bindPipeline( vk::PipelineBindPoint::eGraphics, _context.graphicsPipeline.pipeline );
 
     return true;
 }
@@ -87,6 +88,9 @@ auto VulkanRenderer::EndFrame( [[maybe_unused]] AppState& state ) -> bool
     auto frame = _context.GetCurrentFrame();
     const auto& cmd = _context.graphicsCommandBuffers[_context.imageIndex];
     // const auto& framebuffer = _context.framebuffers[_context.imageIndex];
+
+    cmd.commandBuffer.bindVertexBuffers( 0, _context.triangleBuffer.buffer, { 0 } );
+    cmd.commandBuffer.draw( ToU32( 3 ), 1, 0, 0 );
 
     _context.renderPass.EndRenderPass( cmd.commandBuffer );
     cmd.End();

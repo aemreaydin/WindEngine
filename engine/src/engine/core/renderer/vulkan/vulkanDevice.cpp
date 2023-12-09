@@ -109,6 +109,7 @@ void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
         .pQueueCreateInfos = queueInfos.data(),
         .enabledExtensionCount = ToU32( kRequiredExtensions.size() ),
         .ppEnabledExtensionNames = kRequiredExtensions.data(),
+        //                             .pEnabledFeatures = &physicalDeviceInfo.features  // TODO: Do not enable all
     };
     device = physicalDevice.createDevice( deviceInfo, allocator );
     VULKAN_HPP_DEFAULT_DISPATCHER.init( device );
