@@ -4,7 +4,7 @@
 namespace WindEngine::Core::Render
 {
 
-VulkanRenderPass::VulkanRenderPass( const VulkanDevice& device, vk::AllocationCallbacks* allocator )
+VulkanRenderPass::VulkanRenderPass( VulkanDevice& device, vk::AllocationCallbacks* allocator )
   : VulkanHandle( &device, allocator )
 {
 }
@@ -16,7 +16,7 @@ void VulkanRenderPass::Initialize( const vk::Format& imageFormat, const vk::Form
                                                  .format = imageFormat,
                                                  .samples = vk::SampleCountFlagBits::e1,
                                                  .loadOp = vk::AttachmentLoadOp::eClear,
-                                                 .storeOp = vk::AttachmentStoreOp::eDontCare,
+                                                 .storeOp = vk::AttachmentStoreOp::eStore,
                                                  .initialLayout = vk::ImageLayout::eUndefined,
                                                  .finalLayout = vk::ImageLayout::ePresentSrcKHR,
                                                },
@@ -75,7 +75,7 @@ void VulkanRenderPass::BeginRenderPass( const vk::CommandBuffer& commandBuffer, 
                                                        vk::ClearValue { .depthStencil = depthStencilValue } };
     const auto beginInfo = vk::RenderPassBeginInfo {
         .renderPass = mainRenderPass,
-        .framebuffer = framebuffer,  // TODO
+        .framebuffer = framebuffer,
         .renderArea = renderArea,
         .clearValueCount = ToU32( clearValues.size() ),
         .pClearValues = clearValues.data(),

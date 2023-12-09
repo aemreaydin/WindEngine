@@ -6,7 +6,7 @@ namespace WindEngine::Core
 {
 
 #if defined( _DBG )
-constexpr auto kLogLevel = spdlog::level::info;
+constexpr auto kLogLevel = spdlog::level::debug;
 #else
 constexpr auto kLogLevel = spdlog::level::trace;
 #endif

@@ -14,12 +14,12 @@ void VulkanCommandBuffer::Allocate( const vk::Device& device, const vk::CommandP
     commandBuffer = device.allocateCommandBuffers( allocateInfo ).front();
 }
 
-void VulkanCommandBuffer::Free( const vk::Device& device, const vk::CommandPool& pool )
+void VulkanCommandBuffer::Free( const vk::Device& device, const vk::CommandPool& pool ) const
 {
     device.freeCommandBuffers( pool, commandBuffer );
 }
 
-void VulkanCommandBuffer::Begin()
+void VulkanCommandBuffer::Begin() const
 {
     const auto beginInfo = vk::CommandBufferBeginInfo {
         .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,  // TODO Add rest
@@ -27,12 +27,12 @@ void VulkanCommandBuffer::Begin()
     commandBuffer.begin( beginInfo );
 }
 
-void VulkanCommandBuffer::End()
+void VulkanCommandBuffer::End() const
 {
     commandBuffer.end();
 }
 
-void VulkanCommandBuffer::Reset()
+void VulkanCommandBuffer::Reset() const
 {
     commandBuffer.reset();
 }

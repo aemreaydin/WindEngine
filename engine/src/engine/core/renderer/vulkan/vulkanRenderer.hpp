@@ -12,10 +12,10 @@ namespace WindEngine::Core::Render
 class VulkanRenderer final : public Renderer
 {
 public:
-    auto Initialize( const char* applicationName ) -> bool override;
+    auto Initialize( const AppConfig& config ) -> bool override;
     void Shutdown() override;
-    auto BeginFrame( F64 deltaTime ) -> bool override;
-    auto EndFrame( F64 deltaTime ) -> bool override;
+    auto BeginFrame( AppState& state ) -> bool override;
+    auto EndFrame( AppState& state ) -> bool override;
     void Resize( U16 width, U16 height ) override;
 
     VulkanRenderer() = default;

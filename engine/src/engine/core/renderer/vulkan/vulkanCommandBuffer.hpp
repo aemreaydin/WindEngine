@@ -11,11 +11,11 @@ struct VulkanCommandBuffer
     vk::CommandBuffer commandBuffer;
 
     void Allocate( const vk::Device& device, const vk::CommandPool& pool, bool bIsPrimary );
-    void Free( const vk::Device& device, const vk::CommandPool& pool );
+    void Free( const vk::Device& device, const vk::CommandPool& pool ) const;
 
-    void Begin();
-    void End();
-    void Reset();
+    void Begin() const;
+    void End() const;
+    void Reset() const;
 };
 
 }  // namespace WindEngine::Core::Render

@@ -48,8 +48,9 @@ auto Engine::Initialize() -> bool
         return false;
     }
 
-    // TODO: Hard-coded name
-    if ( !_upRenderer->Initialize( "Wind Engine" ) )
+    // TODO: Hard-coded
+    const AppConfig config( "WindEngine", 1600, 900 );
+    if ( !_upRenderer->Initialize( config ) )
     {
         return false;
     }
@@ -76,8 +77,13 @@ void Engine::Run()
 
         _spAppState->FrameStart();
 
-        _upApp->Update();
-        _upApp->Render();
+        //        _upApp->Update();
+        //        _upApp->Render();
+
+        if ( _upRenderer->BeginFrame( *_spAppState ) )
+        {
+            _upRenderer->EndFrame( *_spAppState );
+        }
 
         _spAppState->FrameEnd();
     }

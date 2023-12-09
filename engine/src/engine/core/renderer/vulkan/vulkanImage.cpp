@@ -4,8 +4,8 @@
 namespace WindEngine::Core::Render
 {
 
-VulkanImage::VulkanImage( const VulkanDevice* pDevice, vk::AllocationCallbacks* allocator )
-  : VulkanHandle( pDevice, allocator )
+VulkanImage::VulkanImage( VulkanDevice& device, vk::AllocationCallbacks* allocator )
+  : VulkanHandle( &device, allocator )
 {
 }
 

@@ -52,20 +52,21 @@ struct VulkanDevice
 
     [[nodiscard]] auto Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
                                    const vk::AllocationCallbacks* allocator ) -> bool;
-    void Destroy();
+    void Destroy() const;
 
     [[nodiscard]] auto AreGraphicsAndPresentSharing() const -> bool;
+    void QueryForSwapchainSupportInfo( const vk::SurfaceKHR& surface );
 
 private:
     [[nodiscard]] auto InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool;
     void InitializeDevice( const vk::AllocationCallbacks* allocator );
 
-    [[nodiscard]] static bool IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice,
-                                                        const vk::SurfaceKHR& surface );
-    [[nodiscard]] static QueueFamilyIndices FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
-                                                                            const vk::SurfaceKHR& surfaceKhr );
+    [[nodiscard]] static auto IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice,
+                                                        const vk::SurfaceKHR& surface ) -> bool;
+    [[nodiscard]] static auto FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& physicalDevice,
+                                                              const vk::SurfaceKHR& surfaceKhr ) -> QueueFamilyIndices;
 
-    [[nodiscard]] auto FindDepthFormat() -> vk::Format;
+    [[nodiscard]] auto FindDepthFormat() const -> vk::Format;
 };
 
 }  // namespace WindEngine::Core::Render

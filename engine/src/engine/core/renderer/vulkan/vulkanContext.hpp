@@ -12,10 +12,14 @@
 namespace WindEngine::Core::Render
 {
 
-struct FrameData
+struct Frame
 {
-    U32 imageIndex;
+    vk::Semaphore renderSemaphore;
+    vk::Semaphore presentSemaphore;
+    vk::Fence fence;
 };
+
+constexpr U32 kFramesInFlight = 2;  // TODO Configurable?
 
 struct VulkanContext
 {
@@ -30,19 +34,25 @@ struct VulkanContext
     std::vector<VulkanCommandBuffer> graphicsCommandBuffers {};
     vk::CommandPool graphicsCommandPool;
 
+    std::vector<vk::Framebuffer> framebuffers {};
     U32 framebufferWidth {};
     U32 framebufferHeight {};
 
-    FrameData frameData {};
+    USize imageIndex {};
+    USize currentFrame {};
+    std::array<Frame, kFramesInFlight> frames {};
 
     VulkanContext();
 
-    auto Initialize( const char* applicationName ) -> bool;
+    auto Initialize( const char* applicationName, U32 width, U32 height ) -> bool;
     void Shutdown();
 
-    auto GetInstance() const -> const vk::Instance&;
-    auto GetDevice() const -> const vk::Device&;
-    auto GetSwapchain() const -> const vk::SwapchainKHR&;
+    [[nodiscard]] auto GetInstance() const -> const vk::Instance&;
+    [[nodiscard]] auto GetDevice() const -> const vk::Device&;
+    [[nodiscard]] auto GetSwapchain() const -> const vk::SwapchainKHR&;
+    [[nodiscard]] auto GetCurrentFrame() -> Frame&;
+
+    void RecreateFramebuffers( U32 width, U32 height );
 };
 
 }  // namespace WindEngine::Core::Render
