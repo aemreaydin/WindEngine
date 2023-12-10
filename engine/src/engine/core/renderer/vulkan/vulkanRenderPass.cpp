@@ -24,7 +24,7 @@ void VulkanRenderPass::Initialize( const vk::Format& imageFormat, const vk::Form
                                                  .format = depthFormat,
                                                  .samples = vk::SampleCountFlagBits::e1,
                                                  .loadOp = vk::AttachmentLoadOp::eClear,
-                                                 .storeOp = vk::AttachmentStoreOp::eStore,
+                                                 .storeOp = vk::AttachmentStoreOp::eDontCare,
                                                  .stencilLoadOp = vk::AttachmentLoadOp::eDontCare,
                                                  .stencilStoreOp = vk::AttachmentStoreOp::eDontCare,
                                                  .initialLayout = vk::ImageLayout::eUndefined,
@@ -44,10 +44,13 @@ void VulkanRenderPass::Initialize( const vk::Format& imageFormat, const vk::Form
 
     const auto mainSubpassDependencies = vk::SubpassDependency {
         .srcSubpass = vk::SubpassExternal,
-        .srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        .dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+        .srcStageMask =
+          vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+        .dstStageMask =
+          vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
         .srcAccessMask = {},
-        .dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite,
+        .dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite |
+                         vk::AccessFlagBits::eDepthStencilAttachmentWrite,
     };
 
     const auto renderPassInfo = vk::RenderPassCreateInfo {

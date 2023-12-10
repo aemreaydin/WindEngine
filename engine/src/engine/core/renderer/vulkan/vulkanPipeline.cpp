@@ -63,14 +63,13 @@ void VulkanPipeline::Destroy()
 void VulkanPipeline::InitializeShaderStage( const std::string& vertFile, const std::string& fragFile )
 
 {
-    const auto vertModule = CreateShaderModule( vertFile );
-    const auto fragModule = CreateShaderModule( fragFile );
-    _shaderModules = { vertModule, fragModule };
-    const auto vertInfo = vk::PipelineShaderStageCreateInfo {
-        .stage = vk::ShaderStageFlagBits::eVertex, .module = vertModule, .pName = "main", .pSpecializationInfo = nullptr
-    };
+    _shaderModules = { CreateShaderModule( vertFile ), CreateShaderModule( fragFile ) };
+    const auto vertInfo = vk::PipelineShaderStageCreateInfo { .stage = vk::ShaderStageFlagBits::eVertex,
+                                                              .module = _shaderModules.at( 0 ),
+                                                              .pName = "main",
+                                                              .pSpecializationInfo = nullptr };
     const auto fragInfo = vk::PipelineShaderStageCreateInfo { .stage = vk::ShaderStageFlagBits::eFragment,
-                                                              .module = fragModule,
+                                                              .module = _shaderModules.at( 1 ),
                                                               .pName = "main",
                                                               .pSpecializationInfo = nullptr };
     _shaderInfos = { vertInfo, fragInfo };
@@ -107,7 +106,7 @@ void VulkanPipeline::InitializeRasterizationState()
     _rasterizationInfo = { .depthClampEnable = VK_FALSE,
                            .rasterizerDiscardEnable = VK_FALSE,
                            .polygonMode = vk::PolygonMode::eFill,
-                           .cullMode = vk::CullModeFlagBits::eNone,
+                           .cullMode = vk::CullModeFlagBits::eBack,
                            .frontFace = vk::FrontFace::eCounterClockwise,
                            .depthBiasEnable = VK_FALSE,
                            .depthBiasConstantFactor = 0.0F,
@@ -129,29 +128,31 @@ void VulkanPipeline::InitializeMultisampleState()
 void VulkanPipeline::InitializeDepthStencilState()
 {
     _depthStencilInfo = {
-        .depthTestEnable = VK_TRUE, .depthWriteEnable = VK_TRUE, .depthCompareOp = vk::CompareOp::eLessOrEqual,
-        //                          .depthBoundsTestEnable = VK_FALSE,
-        //                          .stencilTestEnable = VK_FALSE,
-        //                          .front = vk::StencilOpState::
-        //                          .back = vk::StencilOpState::
-        //                          .minDepthBounds = 0.0F,
-        //                          .maxDepthBounds = 1.0F
+        .depthTestEnable = VK_TRUE,
+        .depthWriteEnable = VK_TRUE,
+        .depthCompareOp = vk::CompareOp::eLessOrEqual,
+        .depthBoundsTestEnable = VK_FALSE,
+        .stencilTestEnable = VK_FALSE,
+        .front = {},
+        .back = {},
+        .minDepthBounds = 0.0F,
+        .maxDepthBounds = 1.0F,
     };
 }
 
 void VulkanPipeline::InitializeColorBlendState()
 {
-    static const auto colorAttachment = vk::PipelineColorBlendAttachmentState {
-        .blendEnable = VK_FALSE,
-        //                                              .srcColorBlendFactor = vk::BlendFactor::eOne,
-        //                                              .dstColorBlendFactor = vk::BlendFactor::eOne,
-        //                                              .colorBlendOp = vk::BlendOp::eAdd,
-        //                                              .srcAlphaBlendFactor = vk::BlendFactor::eOne,
-        //                                              .dstAlphaBlendFactor = vk::BlendFactor::eOne,
-        //        .alphaBlendOp = vk::BlendOp::eMin,
-        .colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
-                          vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA
-    };
+    static const auto colorAttachment =
+      vk::PipelineColorBlendAttachmentState { .blendEnable = VK_FALSE,
+                                              .srcColorBlendFactor = vk::BlendFactor::eOne,
+                                              .dstColorBlendFactor = vk::BlendFactor::eOne,
+                                              .colorBlendOp = vk::BlendOp::eAdd,
+                                              .srcAlphaBlendFactor = vk::BlendFactor::eOne,
+                                              .dstAlphaBlendFactor = vk::BlendFactor::eOne,
+                                              .alphaBlendOp = vk::BlendOp::eMin,
+                                              .colorWriteMask =
+                                                vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
+                                                vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA };
     const auto blendConstants = std::array<float, 4> { 0.0F, 0.0F, 0.0F, 0.0F };  // TODO: Try this
     _colorBlendInfo = { .logicOpEnable = VK_FALSE,
                         .logicOp = vk::LogicOp::eCopy,

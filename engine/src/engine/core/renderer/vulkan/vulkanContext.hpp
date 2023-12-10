@@ -18,9 +18,9 @@ struct Vertex
 };
 
 const auto triangle = std::vector<Vertex> {
-    { .pos = glm::vec3 { 0.2F, 0.2F, 1.0F }, .col = glm::vec3 { 1.0F, 0.0F, 0.0F } },
-    { .pos = glm::vec3 { 0.2F, 0.8F, 1.0F }, .col = glm::vec3 { 0.0F, 1.0F, 0.0F } },
-    { .pos = glm::vec3 { 0.8F, 0.2F, 1.0F }, .col = glm::vec3 { 0.0F, 0.0F, 1.0F } },
+    { .pos = glm::vec3 { 0.2F, 0.2F, 0.0F }, .col = glm::vec3 { 1.0F, 0.0F, 0.0F } },
+    { .pos = glm::vec3 { 0.2F, 0.8F, 0.0F }, .col = glm::vec3 { 0.0F, 1.0F, 0.0F } },
+    { .pos = glm::vec3 { 0.8F, 0.2F, 0.0F }, .col = glm::vec3 { 0.0F, 0.0F, 1.0F } },
 };
 
 namespace WindEngine::Core::Render
