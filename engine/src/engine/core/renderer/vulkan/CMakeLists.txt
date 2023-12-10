@@ -7,5 +7,7 @@ target_sources(WindVulkan PRIVATE
         vulkanImage.cpp
         vulkanRenderPass.cpp
         vulkanCommandBuffer.cpp
+        vulkanPipeline.cpp
+        vulkanBuffer.cpp
 )
 target_include_directories(WindVulkan PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

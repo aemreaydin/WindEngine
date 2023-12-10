@@ -20,10 +20,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/Wall /WX)
 endif ()
 
-if (APPLE)
-    # TODO Eventually remove this
-    SET(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
-endif ()
 
 add_subdirectory(engine)
 add_subdirectory(test)
