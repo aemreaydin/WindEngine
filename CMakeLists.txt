@@ -1,10 +1,9 @@
-cmake_minimum_required(VERSION 3.26)
-
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "Vcpkg toolchain file")
-SET(CMAKE_CXX_STANDARD 20)
-
+cmake_minimum_required(VERSION 3.28)
 project(WindEngine VERSION 0.0.1 DESCRIPTION "A Game Engine" LANGUAGES CXX)
+
+SET(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 find_package(Vulkan REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
@@ -19,7 +18,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/Wall /WX)
 endif ()
-
 
 add_subdirectory(engine)
 add_subdirectory(test)

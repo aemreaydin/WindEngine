@@ -1,0 +1,32 @@
+version: "3"
+tasks:
+  generate:
+    cmds:
+      - cmake -GNinja -S "{{.USER_WORKING_DIR}}" -B "{{.USER_WORKING_DIR}}/build/Debug" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_TOOLCHAIN_FILE="{{.VCPKG_DIR}}"
+    vars:
+      VCPKG_DIR: "{{.USER_WORKING_DIR}}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+  build:
+    cmds:
+      - cmake --build build/Debug --target all
+    sources:
+      # TODO: Make it so that it takes .h, .hpp, .cpp
+      - engine/**/*.*pp
+    generates:
+      - build/**/*
+  build_shaders:
+    cmds:
+      - engine/shaders/compile.sh
+    sources:
+      # TODO: Regex this to look for frag and vert files
+      - engine/shaders/**/*.frag
+      - engine/shaders/**/*.vert
+    generates:
+      - engine/shaders/*.spv
+  run:
+    deps: [build, build_shaders]
+    cmds:
+      - ./build/Debug/test/TEST
+  test:
+    deps: [build]
+    cmds:
+      - ctest --test-dir build/Debug/test --stop-on-failure --output-on-failure

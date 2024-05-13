@@ -14,7 +14,7 @@ auto main() -> int
 
     WindEngine::Core::Memory::LinearAllocator allocator { 256 };
     allocator.Init();
-    
+
     {
         WindEngine::Engine engine { G_CREATE_APP() };
         engine.Run();
