@@ -1,18 +1,6 @@
 Checks: >
-  clang-diagnostic-*,
-  clang-analyzer-*, 
-  *, 
-  -*magic-numbers,
-  -altera*, -llvm*, -fuchsia*, -hicpp*,
-  -bugprone-easily-swappable-parameters,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
-  -google-build-using-namespace,
-  -google-global-names-in-headers,
-  -misc-definitions-in-headers,
-  -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-no-malloc,
-  -*-pro-bounds-pointer-arithmetic,
-  -*-pro-bounds-constant-array-index
+  clang-diagnostic-*, clang-analyzer-*,  *,  -*magic-numbers, -altera*, -llvm*, -fuchsia*, -hicpp*, -bugprone-easily-swappable-parameters, -cppcoreguidelines-pro-type-reinterpret-cast, -google-build-using-namespace, -google-global-names-in-headers, -misc-definitions-in-headers, -cppcoreguidelines-owning-memory, -cppcoreguidelines-no-malloc, -*-pro-bounds-pointer-arithmetic, -*-pro-bounds-constant-array-index
+
 WarningsAsErrors: "*"
 CheckOptions:
   readability-identifier-naming.ClassCase: CamelCase
@@ -23,8 +11,7 @@ CheckOptions:
   readability-identifier-naming.ConstantPrefix: k
   readability-identifier-naming.ConstexprVariableCase: CamelCase
   readability-identifier-naming.ConstexprVariablePrefix: k
-  readability-identifier-naming.GlobalFunctionCase: UPPER_CASE
-  readability-identifier-naming.GlobalFunctionPrefix: G_
+  readability-identifier-naming.ConstexprFunctionCase: UPPER_CASE
   readability-identifier-naming.EnumCase: CamelCase
   readability-identifier-naming.EnumConstantCase: UPPER_CASE
   readability-identifier-naming.FunctionCase: CamelCase

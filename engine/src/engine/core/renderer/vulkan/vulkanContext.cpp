@@ -19,14 +19,14 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
                                static_cast<int>( height ), SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
     if ( window == nullptr )
     {
-        WIND_FATAL( "Failed to create SDL window. {}", SDL_GetError() )
+        WindFatal( "Failed to create SDL window. {}", SDL_GetError() );
     }
 
     instance.Initialize( applicationName, window, allocator );
 
     if ( SDL_Vulkan_CreateSurface( window, GetInstance(), reinterpret_cast<VkSurfaceKHR*>( &surface ) ) != SDL_TRUE )
     {
-        WIND_FATAL( "Failed to create surface." )
+        WindFatal( "Failed to create surface." );
     }
 
     if ( !device.Initialize( GetInstance(), surface, allocator ) )
@@ -50,7 +50,7 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
     {
         buffer.Allocate( GetDevice(), graphicsCommandPool, true );
     }
-    WIND_INFO( "Allocated {} graphics command buffers.", graphicsCommandBuffers.size() )
+    WindInfo( "Allocated {} graphics command buffers.", graphicsCommandBuffers.size() );
 
     RecreateFramebuffers( width, height );
 

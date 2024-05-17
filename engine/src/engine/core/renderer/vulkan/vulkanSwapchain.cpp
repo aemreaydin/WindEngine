@@ -29,7 +29,7 @@ void VulkanSwapchain::Recreate( const vk::SurfaceKHR& surface, U32 width, U32 he
 {
     Destroy();
     Create( surface, width, height );
-    WIND_DEBUG( "Swapchain recreated with size ({},{})", width, height )
+    WindDebug( "Swapchain recreated with size ({},{})", width, height );
 }
 
 auto VulkanSwapchain::AcquireNextImage( U64 timeout, vk::Semaphore semaphore, vk::Fence fence ) -> std::optional<U32>
@@ -43,7 +43,7 @@ auto VulkanSwapchain::AcquireNextImage( U64 timeout, vk::Semaphore semaphore, vk
     {
         return { imageIndex };
     }
-    WIND_FATAL( "Failed to acquire image." )
+    WindFatal( "Failed to acquire image." );
 }
 
 auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
@@ -65,7 +65,7 @@ auto VulkanSwapchain::Present( vk::Semaphore semaphore, U32 imageIndex ) -> bool
     {
         return true;
     }
-    WIND_FATAL( "Failed to present image." )
+    WindFatal( "Failed to present image." );
 }
 
 void VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 height )
@@ -95,7 +95,7 @@ void VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
     {
         imageFormat = formats[0];
     }
-    WIND_DEBUG( "Selected Format: {}", vk::to_string( imageFormat.format ) )
+    WindDebug( "Selected Format: {}", vk::to_string( imageFormat.format ) );
 
     vk::Extent2D imageExtent;
     if ( surfaceCapabilities.currentExtent.width != UINT32_MAX )

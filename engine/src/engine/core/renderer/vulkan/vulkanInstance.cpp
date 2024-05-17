@@ -9,10 +9,10 @@
 // constexpr auto kIncludeValidation = true;
 // #endif
 
-static VkBool32 VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                       VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-                                                       const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                       [[maybe_unused]] void* pUserData )
+static auto VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                   VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                                   const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                   [[maybe_unused]] void* pUserData ) -> VkBool32
 {
     const auto* type = std::invoke( [&]() {
         switch ( messageTypes )
@@ -33,19 +33,19 @@ static VkBool32 VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeveri
     switch ( messageSeverity )
     {
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-        WIND_TRACE( "[{}]: {}", type, pCallbackData->pMessage )
+        WindTrace( "[{}]: {}", type, pCallbackData->pMessage );
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-        WIND_INFO( "[{}]: {}", type, pCallbackData->pMessage )
+        WindInfo( "[{}]: {}", type, pCallbackData->pMessage );
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-        WIND_WARN( "[{}]: {}", type, pCallbackData->pMessage )
+        WindWarn( "[{}]: {}", type, pCallbackData->pMessage );
         break;
     case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-        WIND_ERROR( "[{}]: {}", type, pCallbackData->pMessage )
+        WindError( "[{}]: {}", type, pCallbackData->pMessage );
         break;
     default:
-        WIND_ERROR( "**UNKNOWN_SEVERITY** - [{}]: {}", type, pCallbackData->pMessage )
+        WindError( "**UNKNOWN_SEVERITY** - [{}]: {}", type, pCallbackData->pMessage );
         break;
     }
     return VK_FALSE;
@@ -61,7 +61,7 @@ static void AddRequestedExtension( const char* requestedExtensionName, std::vect
         enabledExtensionNames.push_back( requestedExtensionName );
         return;
     }
-    WIND_WARN( "Failed to find extension {}." )
+    WindWarn( "Failed to find extension {}.", requestedExtensionName );
 }
 
 void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window, vk::AllocationCallbacks* allocator )

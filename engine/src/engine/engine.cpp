@@ -19,7 +19,7 @@ static auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
     case RendererTypes::VULKAN:
         return std::make_unique<VulkanRenderer>();
     case RendererTypes::DIRECTX:
-        WIND_ERROR( "DIRECTX renderer not implemented." )
+        WindError( "DIRECTX renderer not implemented." );
         return nullptr;
     }
 }
@@ -44,11 +44,11 @@ auto Engine::Initialize() -> bool
 {
     if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
     {
-        WIND_ERROR( "SDL_Init failed. {}", SDL_GetError() )
+        WindError( "SDL_Init failed. {}", SDL_GetError() );
         return false;
     }
 
-    // TODO: Hard-coded
+    // TODO(emreaydn): Hard-coded
     const AppConfig config( "WindEngine", 1600, 900 );
     if ( !_upRenderer->Initialize( config ) )
     {

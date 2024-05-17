@@ -30,7 +30,7 @@ auto VulkanRenderer::BeginFrame( AppState& state ) -> bool
     const auto result = _context.GetDevice().waitForFences( frame.fence, VK_TRUE, std::numeric_limits<U64>::max() );
     if ( result != vk::Result::eTimeout && result != vk::Result::eSuccess )
     {
-        WIND_ERROR( "vkWaitForFences Error" )
+        WindError( "vkWaitForFences Error" );
         return false;
     }
 
@@ -116,7 +116,7 @@ auto VulkanRenderer::EndFrame( [[maybe_unused]] AppState& state ) -> bool
         _context.RecreateFramebuffers( width, height );
         return false;
     }
-    WIND_TRACE( "Presented Frame {}", _context.currentFrame )
+    WindTrace( "Presented Frame {}", _context.currentFrame );
     ++_context.currentFrame;
     return true;
 }

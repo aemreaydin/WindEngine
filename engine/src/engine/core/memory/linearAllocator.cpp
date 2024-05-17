@@ -26,7 +26,7 @@ void LinearAllocator::Init()
     }
     _pStart = static_cast<std::byte*>( std::malloc( GetSize() ) );
     _offset = 0;
-    WIND_DEBUG( "LinearAllocator::Init" )
+    WindDebug( "LinearAllocator::Init" );
 }
 
 auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
@@ -45,8 +45,8 @@ auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
     std::byte* pAddress = _pStart + _offset + padding;
     _offset += size + padding;
 
-    WIND_DEBUG( "LinearAllocator::Allocate" )
-    WIND_DEBUG( "Current Address: {} - Padding: {}", fmt::ptr( pAddress ), padding )
+    WindDebug( "LinearAllocator::Allocate" );
+    WindDebug( "Current Address: {} - Padding: {}", fmt::ptr( pAddress ), padding );
 
     return pAddress;
 }
@@ -58,7 +58,7 @@ void LinearAllocator::Free( [[maybe_unused]] void* ptr )
 
 void LinearAllocator::Reset()
 {
-    WIND_DEBUG( "LinearAllocator::Reset" )
+    WindDebug( "LinearAllocator::Reset" );
     _offset = 0;
 }
 

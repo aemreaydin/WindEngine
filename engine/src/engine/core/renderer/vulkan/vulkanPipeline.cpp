@@ -13,7 +13,7 @@ VulkanPipeline::VulkanPipeline( VulkanDevice& device, vk::AllocationCallbacks* a
 
 void VulkanPipeline::Initialize( const vk::RenderPass& renderPass )
 {
-    InitializeShaderStage( "shaders/vert.spv", "shaders/frag.spv" );
+    InitializeShaderStage( "shaders/simple_vert.spv", "shaders/simple_frag.spv" );
     InitializeVertexInputState();
     InitializeInputAssemblyState();
     InitializeViewportState();
@@ -45,7 +45,7 @@ void VulkanPipeline::Initialize( const vk::RenderPass& renderPass )
     auto [result, graphicsPipeline] = _device->device.createGraphicsPipeline( nullptr, pipelineInfo, _allocator );
     if ( result != vk::Result::eSuccess )
     {
-        WIND_FATAL( "Failed to create the pipeline." )
+        WindFatal( "Failed to create the pipeline." );
     }
     pipeline = graphicsPipeline;
 }

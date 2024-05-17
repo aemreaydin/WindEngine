@@ -38,11 +38,11 @@ void AllocationManager::Free( void* ptr, size_t size, AllocationType type )
 
 void AllocationManager::PrintStats()
 {
-    WIND_DEBUG( "[[Memory Statistics]]" )
-    WIND_DEBUG( "\tTotal Allocations: {}", _stats.totalAllocated )
+    WindDebug( "[[Memory Statistics]]" );
+    WindDebug( "\tTotal Allocations: {}", _stats.totalAllocated );
     for ( size_t ind = 0; ind != _stats.tagAllocations.size(); ++ind )
     {
-        WIND_DEBUG( "\t{} Allocations: {}", kTagNames[ind], _stats.tagAllocations[ind] )
+        WindDebug( "\t{} Allocations: {}", kTagNames[ind], _stats.tagAllocations[ind] );
     }
 }
 

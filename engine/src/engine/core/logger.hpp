@@ -21,29 +21,45 @@ public:
 #define WIND_GET_LOGGER spdlog::get( kLoggerName )
 #define WIND_CHECK_LOGGER WIND_GET_LOGGER != nullptr
 
-#define WIND_TRACE( ... )                                                                                              \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->trace( __VA_ARGS__ );
+template <typename... Args>
+void WindLog( spdlog::level::level_enum level, spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    const auto& logger = spdlog::get( kLoggerName );
+    if ( logger != nullptr )
+    {
+        logger->log( level, fmt, std::forward<Args>( args )... );
+    }
+}
 
-#define WIND_DEBUG( ... )                                                                                              \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->debug( __VA_ARGS__ );
+template <typename... Args> void WindTrace( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::trace, fmt, std::forward<Args>( args )... );
+}
 
-#define WIND_INFO( ... )                                                                                               \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->info( __VA_ARGS__ );
+template <typename... Args> void WindDebug( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::debug, fmt, std::forward<Args>( args )... );
+}
 
-#define WIND_WARN( ... )                                                                                               \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->warn( __VA_ARGS__ );
+template <typename... Args> void WindInfo( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::info, fmt, std::forward<Args>( args )... );
+}
 
-#define WIND_ERROR( ... )                                                                                              \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->error( __VA_ARGS__ );
+template <typename... Args> void WindWarn( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::warn, fmt, std::forward<Args>( args )... );
+}
 
-#define WIND_FATAL( ... )                                                                                              \
-    if ( WIND_CHECK_LOGGER )                                                                                           \
-        WIND_GET_LOGGER->critical( __VA_ARGS__ );                                                                      \
-    throw std::runtime_error( "Fatal error occurred. Exiting..." );
+template <typename... Args> void WindError( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::err, fmt, std::forward<Args>( args )... );
+}
+
+template <typename... Args> [[noreturn]] void WindFatal( spdlog::format_string_t<Args...> fmt, Args&&... args )
+{
+    WindLog( spdlog::level::critical, fmt, std::forward<Args>( args )... );
+    throw std::runtime_error( "Fatal error occured. Exiting..." );
+}
 
 #endif  // WINDENGINE_LOGGER_HPP

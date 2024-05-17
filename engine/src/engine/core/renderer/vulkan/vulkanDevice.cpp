@@ -25,7 +25,7 @@ auto PhysicalDeviceInfo::FindMemoryIndex( U32 memoryTypeBits, vk::MemoryProperty
             return ind;
         }
     }
-    WIND_FATAL( "Failed to find a suitable memory index." )
+    WindFatal( "Failed to find a suitable memory index." );
 }
 
 auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKHR& surface,
@@ -33,7 +33,7 @@ auto VulkanDevice::Initialize( const vk::Instance& instance, const vk::SurfaceKH
 {
     if ( !InitializePhysicalDevice( instance, surface ) )
     {
-        WIND_FATAL( "Failed to find a suitable physical device." )
+        WindFatal( "Failed to find a suitable physical device." );
     }
 
     InitializeDevice( allocator );
@@ -76,13 +76,13 @@ auto VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const
 
             depthFormat = FindDepthFormat();
 
-            WIND_INFO( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) )
-            WIND_INFO( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) )
+            WindInfo( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
+            WindInfo( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) );
             for ( size_t ind = 0; ind != physicalDeviceInfo.memory.memoryHeapCount; ++ind )
             {
                 const auto& memoryHeap = physicalDeviceInfo.memory.memoryHeaps[ind];
-                WIND_INFO( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0F / 1024.0F / 1024.0F,
-                           vk::to_string( memoryHeap.flags ) )
+                WindInfo( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0F / 1024.0F / 1024.0F,
+                          vk::to_string( memoryHeap.flags ) );
             }
             return true;
         }
@@ -120,15 +120,15 @@ void VulkanDevice::InitializeDevice( const vk::AllocationCallbacks* allocator )
     presentQueue = device.getQueue( indices.present, 0 );
 }
 
-auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice, const vk::SurfaceKHR& surface )
-  -> bool
+auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalDevice,
+                                             const vk::SurfaceKHR& surface ) -> bool
 {
     // Check Device Types
     const auto pdProps = physicalDevice.getProperties();
     if ( pdProps.deviceType != vk::PhysicalDeviceType::eDiscreteGpu &&
          pdProps.deviceType != vk::PhysicalDeviceType::eIntegratedGpu )
     {
-        WIND_ERROR( "{} is not discrete or integrated.", std::string_view( pdProps.deviceName ) )
+        WindError( "{} is not discrete or integrated.", std::string_view( pdProps.deviceName ) );
         return false;
     }
 
@@ -147,7 +147,7 @@ auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
                  return strcmp( ext, extension.extensionName ) == 0;
              } ) == deviceExtensions.end() )
         {
-            WIND_ERROR( "{} does not support {}.", std::string_view( pdProps.deviceName ), ext )
+            WindError( "{} does not support {}.", std::string_view( pdProps.deviceName ), ext );
             return false;
         }
     }
@@ -179,7 +179,7 @@ auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     }
     if ( !( supportsTransfer && supportsCompute && supportsGraphics && supportsPresent ) )
     {
-        WIND_ERROR( "{} does not have support for required queues.", std::string_view( pdProps.deviceName ) )
+        WindError( "{} does not have support for required queues.", std::string_view( pdProps.deviceName ) );
         return false;
     }
 
@@ -277,7 +277,7 @@ auto VulkanDevice::FindDepthFormat() const -> vk::Format
         return vk::Format::eD24UnormS8Uint;
     }
 
-    WIND_FATAL( "Failed to find a suitable depth format." )
+    WindFatal( "Failed to find a suitable depth format." );
 }
 
 }  // namespace WindEngine::Core::Render

@@ -8,17 +8,22 @@ SET(COMPILE_DEFINITIONS
         DLLEXPORT
         VULKAN_HPP_NO_CONSTRUCTORS
         VULKAN_HPP_DISPATCH_LOADER_DYNAMIC
+        SPDLOG_FMT_EXTERNAL
         $<$<CONFIG:Debug>:_DBG>
         $<$<CONFIG:RelWithDebInfo>:_DBG>
         $<$<CONFIG:Release>:_REL>
         $<$<CONFIG:MinSizeRel>:_REL>)
 
-add_library(WindVulkan SHARED ${Wind_Engine_Src})
+
+add_library(WindVulkan  ${Wind_Engine_Src})
 target_link_libraries(WindVulkan PUBLIC ${THIRD_PARTY_LIBS})
+target_include_directories(WindVulkan PUBLIC math/include)
 if (APPLE)
     LIST(APPEND COMPILE_DEFINITIONS VK_USE_PLATFORM_MACOS_MVK GLM_FORCE_RADIANS GLM_FORCE_DEPTH_ZERO_TO_ONE)
 endif ()
 target_compile_definitions(WindVulkan PUBLIC ${COMPILE_DEFINITIONS})
+target_compile_features(WindVulkan PRIVATE cxx_std_20)
+set_target_properties(WindVulkan PROPERTIES CXX_EXTENSIONS OFF)
 # TODO
 #target_compile_options(WindVulkan PUBLIC -Wall -Wextra -pedantic)
 

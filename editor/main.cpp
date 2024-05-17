@@ -10,25 +10,25 @@ class WindEditorApp : public App
 public:
     auto Initialize() -> bool override
     {
-        WIND_DEBUG( "WindEditorApp::Initialize." )
+        WindDebug( "WindEditorApp::Initialize." );
         return false;
     }
 
     void Shutdown() override
     {
-        WIND_DEBUG( "WindEditorApp::Shutdown." )
+        WindDebug( "WindEditorApp::Shutdown." );
     }
 
     void Update() override
     {
         SDL_Delay( 3 );
-        //        WIND_TRACE( "WindEditorApp::Update." )
+        //        WindTrace( "WindEditorApp::Update." );
     }
 
     void Render() override
     {
         SDL_Delay( 3 );
-        //        WIND_TRACE( "WindEditorApp::Render." )
+        //        WindTrace( "WindEditorApp::Render." );
     }
 };
 
