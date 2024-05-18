@@ -1,10 +1,13 @@
 #include "vulkanDevice.hpp"
 #include "assert.hpp"
 #include "logger.hpp"
+#include <algorithm>
+#include <ranges>
 
 // Check for required device extensions
 #if defined( __APPLE__ )
-static const std::vector<const char*> kRequiredExtensions { "VK_KHR_portability_subset", "VK_KHR_swapchain" };
+static constexpr const std::array<const char*, 2> kRequiredExtensions { "VK_KHR_portability_subset",
+                                                                        "VK_KHR_swapchain" };
 #else
 static std::vector<const char*> kRequiredExtensions { "VK_KHR_swapchain" };
 #endif
@@ -62,30 +65,33 @@ void VulkanDevice::QueryForSwapchainSupportInfo( const vk::SurfaceKHR& surface )
 
 auto VulkanDevice::InitializePhysicalDevice( const vk::Instance& instance, const vk::SurfaceKHR& surface ) -> bool
 {
-    for ( const auto& iterPhysicalDevice : instance.enumeratePhysicalDevices() )
+    const auto& physicalDevices = instance.enumeratePhysicalDevices();
+    auto suitableDevices =
+      physicalDevices |
+      std::views::filter( [&surface]( const auto& device ) { return IsPhysicalDeviceSuitable( device, surface ); } ) |
+      std::views::take( 1 );
+    if ( !suitableDevices.empty() )
     {
-        if ( IsPhysicalDeviceSuitable( iterPhysicalDevice, surface ) )
+        physicalDevice = physicalDevices.at( 0 );
+        physicalDeviceInfo = { .features = physicalDevice.getFeatures(),
+                               .memory = physicalDevice.getMemoryProperties(),
+                               .properties = physicalDevice.getProperties() };
+        QueryForSwapchainSupportInfo( surface );
+
+        indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
+
+        depthFormat = FindDepthFormat();
+
+        WindInfo( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
+        WindInfo( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) );
+        for ( size_t ind = 0; ind != physicalDeviceInfo.memory.memoryHeapCount; ++ind )
         {
-            physicalDevice = iterPhysicalDevice;
-            physicalDeviceInfo = { .features = physicalDevice.getFeatures(),
-                                   .memory = physicalDevice.getMemoryProperties(),
-                                   .properties = physicalDevice.getProperties() };
-            QueryForSwapchainSupportInfo( surface );
-
-            indices = FindSuitableQueueFamilyIndices( physicalDevice, surface );
-
-            depthFormat = FindDepthFormat();
-
-            WindInfo( "Physical Device Name: {}", std::string_view( physicalDeviceInfo.properties.deviceName ) );
-            WindInfo( "Physical Device Type: {}", vk::to_string( physicalDeviceInfo.properties.deviceType ) );
-            for ( size_t ind = 0; ind != physicalDeviceInfo.memory.memoryHeapCount; ++ind )
-            {
-                const auto& memoryHeap = physicalDeviceInfo.memory.memoryHeaps[ind];
-                WindInfo( "Heap Size: {} GiB - Heap Types: {}", memoryHeap.size / 1024.0F / 1024.0F / 1024.0F,
-                          vk::to_string( memoryHeap.flags ) );
-            }
-            return true;
+            const auto& memoryHeap = physicalDeviceInfo.memory.memoryHeaps[ind];
+            WindInfo( "Heap Size: {} GiB - Heap Types: {}",
+                      static_cast<double>( memoryHeap.size ) / 1024.0 / 1024.0 / 1024.0,
+                      vk::to_string( memoryHeap.flags ) );
         }
+        return true;
     }
     return false;
 }
@@ -124,7 +130,7 @@ auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
                                              const vk::SurfaceKHR& surface ) -> bool
 {
     // Check Device Types
-    const auto pdProps = physicalDevice.getProperties();
+    const auto& pdProps = physicalDevice.getProperties();
     if ( pdProps.deviceType != vk::PhysicalDeviceType::eDiscreteGpu &&
          pdProps.deviceType != vk::PhysicalDeviceType::eIntegratedGpu )
     {
@@ -133,23 +139,21 @@ auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     }
 
     // Check format and present mode support
-    const auto formats = physicalDevice.getSurfaceFormatsKHR( surface );
-    const auto presentModes = physicalDevice.getSurfacePresentModesKHR( surface );
+    const auto& formats = physicalDevice.getSurfaceFormatsKHR( surface );
+    const auto& presentModes = physicalDevice.getSurfacePresentModesKHR( surface );
     if ( formats.empty() || presentModes.empty() )
     {
         return false;
     }
 
-    const auto deviceExtensions = physicalDevice.enumerateDeviceExtensionProperties();
-    for ( const auto& ext : kRequiredExtensions )
+    const std::vector<vk::ExtensionProperties>& deviceExtensions = physicalDevice.enumerateDeviceExtensionProperties();
+    if ( !std::ranges::includes(
+           deviceExtensions, kRequiredExtensions,
+           []( const char* extension, const char* extensionName ) { return strcmp( extension, extensionName ) == 0; },
+           &vk::ExtensionProperties::extensionName ) )
     {
-        if ( std::find_if( deviceExtensions.begin(), deviceExtensions.end(), [&]( const auto& extension ) {
-                 return strcmp( ext, extension.extensionName ) == 0;
-             } ) == deviceExtensions.end() )
-        {
-            WindError( "{} does not support {}.", std::string_view( pdProps.deviceName ), ext );
-            return false;
-        }
+        WindError( "{} does not support one or more required extensions.", std::string_view( pdProps.deviceName ) );
+        return false;
     }
 
     // Check Queue Family Support
@@ -157,7 +161,7 @@ auto VulkanDevice::IsPhysicalDeviceSuitable( const vk::PhysicalDevice& physicalD
     bool supportsGraphics { false };
     bool supportsCompute { false };
     bool supportsTransfer { false };
-    const auto queueFamilyProps = physicalDevice.getQueueFamilyProperties();
+    const auto& queueFamilyProps = physicalDevice.getQueueFamilyProperties();
     for ( size_t ind = 0; ind < queueFamilyProps.size(); ++ind )
     {
         if ( physicalDevice.getSurfaceSupportKHR( ToU32( ind ), surface ) == VK_TRUE )
@@ -256,9 +260,9 @@ auto VulkanDevice::FindSuitableQueueFamilyIndices( const vk::PhysicalDevice& phy
         }
     }
 
-    G_ASSERT_MSG( indices.graphics != UINT32_MAX && indices.compute != UINT32_MAX && indices.transfer != UINT32_MAX &&
-                    indices.present != UINT32_MAX,
-                  "Failed to assign an index to a queue." );
+    WindAssert( indices.graphics != UINT32_MAX && indices.compute != UINT32_MAX && indices.transfer != UINT32_MAX &&
+                  indices.present != UINT32_MAX,
+                "Failed to assign an index to a queue." );
 
     return indices;
 }

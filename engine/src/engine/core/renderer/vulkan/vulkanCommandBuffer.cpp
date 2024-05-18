@@ -10,7 +10,7 @@ void VulkanCommandBuffer::Allocate( const vk::Device& device, const vk::CommandP
         .level = bIsPrimary ? vk::CommandBufferLevel::ePrimary : vk::CommandBufferLevel::eSecondary,
         .commandBufferCount = 1,
     };
-    // TODO allocator
+    // TODO(emreaydn): allocator
     commandBuffer = device.allocateCommandBuffers( allocateInfo ).front();
 }
 
@@ -22,7 +22,7 @@ void VulkanCommandBuffer::Free( const vk::Device& device, const vk::CommandPool&
 void VulkanCommandBuffer::Begin() const
 {
     const auto beginInfo = vk::CommandBufferBeginInfo {
-        .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,  // TODO Add rest
+        .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit,  // TODO(emreaydn): Add rest
     };
     commandBuffer.begin( beginInfo );
 }

@@ -53,7 +53,7 @@ auto LinearAllocator::Allocate( size_t size, bool shouldAlign ) -> void*
 
 void LinearAllocator::Free( [[maybe_unused]] void* ptr )
 {
-    G_ASSERT_MSG( false, "LinearAllocator::Reset should be used instead." );
+    WindAssert( false, "LinearAllocator::Reset should be used instead." );
 }
 
 void LinearAllocator::Reset()

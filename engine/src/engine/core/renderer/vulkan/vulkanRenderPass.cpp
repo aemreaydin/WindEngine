@@ -62,12 +62,12 @@ void VulkanRenderPass::Initialize( const vk::Format& imageFormat, const vk::Form
         .pDependencies = &mainSubpassDependencies,
     };
 
-    mainRenderPass = _device->device.createRenderPass( renderPassInfo, _allocator );
+    _mainRenderPass = _device->device.createRenderPass( renderPassInfo, _allocator );
 }
 
 void VulkanRenderPass::Destroy()
 {
-    _device->device.destroy( mainRenderPass, _allocator );
+    _device->device.destroy( _mainRenderPass, _allocator );
 }
 
 void VulkanRenderPass::BeginRenderPass( const vk::CommandBuffer& commandBuffer, const vk::Framebuffer& framebuffer,
@@ -77,18 +77,25 @@ void VulkanRenderPass::BeginRenderPass( const vk::CommandBuffer& commandBuffer, 
     auto clearValues = std::array<vk::ClearValue, 2> { vk::ClearValue { .color = colorValue },
                                                        vk::ClearValue { .depthStencil = depthStencilValue } };
     const auto beginInfo = vk::RenderPassBeginInfo {
-        .renderPass = mainRenderPass,
+        .renderPass = _mainRenderPass,
         .framebuffer = framebuffer,
         .renderArea = renderArea,
         .clearValueCount = ToU32( clearValues.size() ),
         .pClearValues = clearValues.data(),
     };
-    commandBuffer.beginRenderPass( beginInfo, vk::SubpassContents::eInline );
+
+    _commandBuffer = commandBuffer;
+    _commandBuffer.beginRenderPass( beginInfo, vk::SubpassContents::eInline );
 }
 
-void VulkanRenderPass::EndRenderPass( const vk::CommandBuffer& commandBuffer )
+void VulkanRenderPass::EndRenderPass()
 {
-    commandBuffer.endRenderPass();
+    _commandBuffer.endRenderPass();
 }
+
+auto VulkanRenderPass::GetRenderPass() const -> vk::RenderPass
+{
+    return _mainRenderPass;
+};
 
 }  // namespace WindEngine::Core::Render

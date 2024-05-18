@@ -33,7 +33,7 @@ struct Frame
     vk::Fence fence;
 };
 
-constexpr U32 kFramesInFlight = 2;  // TODO Configurable?
+constexpr U32 kFramesInFlight = 2;  // TODO(emreaydn): Configurable?
 
 struct VulkanContext
 {
@@ -45,14 +45,14 @@ struct VulkanContext
     VulkanDevice device {};
     VulkanSwapchain swapchain;
     VulkanRenderPass renderPass;
-    std::vector<VulkanCommandBuffer> graphicsCommandBuffers {};
-    vk::CommandPool graphicsCommandPool {};
+    std::vector<VulkanCommandBuffer> graphicsCommandBuffers;
+    vk::CommandPool graphicsCommandPool;
     VulkanPipeline graphicsPipeline;
 
     // Temp
     VulkanBuffer triangleBuffer;
 
-    std::vector<vk::Framebuffer> framebuffers {};
+    std::vector<vk::Framebuffer> framebuffers;
     U32 framebufferWidth {};
     U32 framebufferHeight {};
 

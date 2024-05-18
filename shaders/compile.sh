@@ -29,7 +29,4 @@ done
 echo "All shaders compiled successfully"
 
 BUILD_DIR="$(dirname .)/build"
-# TODO: Add release as well
-
-COMPILED_FILES=$(find "$SHADER_DIR" -type f \( -name "*.spv" \))
-cp "$COMPILED_FILES" "$BUILD_DIR/Debug/test"
+# TODO : Add release as well

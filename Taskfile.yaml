@@ -7,8 +7,7 @@ tasks:
       VCPKG_DIR: "{{.USER_WORKING_DIR}}/vcpkg/scripts/buildsystems/vcpkg.cmake"
   build:
     cmds:
-      - cmake --build build/Debug --target all
-      # - mkdir -p build/Debug/test/shaders && cp engine/shaders/*.spv build/Debug/test/shaders
+      - cmake --build build/Debug --target all | tee build/Debug/report.txt
     sources:
       # TODO: Make it so that it takes .h, .hpp, .cpp
       - engine/**/*.*pp
@@ -16,9 +15,9 @@ tasks:
       - build/**/*
   build_shaders:
     cmds:
-      - engine/shaders/compile.sh
+      - shaders/compile.sh
     sources:
-      # TODO: Regex this to look for frag and vert files
+      # TODO(emreaydn): Regex this to look for frag and vert files
       - engine/shaders/**/*.frag
       - engine/shaders/**/*.vert
     generates:

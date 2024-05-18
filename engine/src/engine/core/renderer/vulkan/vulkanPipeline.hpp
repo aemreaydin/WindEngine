@@ -2,20 +2,20 @@
 #define WINDENGINE_VULKANPIPELINE_HPP
 
 #include "vulkanHandle.hpp"
-#include <filesystem>
 
 namespace WindEngine::Core::Render
 {
 
 struct VulkanPipeline : public VulkanHandle
 {
-    vk::PipelineLayout pipelineLayout;
-    vk::Pipeline pipeline;
-
     VulkanPipeline( VulkanDevice& device, vk::AllocationCallbacks* allocator );
 
     void Initialize( const vk::RenderPass& renderPass );
-    void Destroy();
+    void Destroy() override;
+
+    [[nodiscard]] auto GetPipeline() const -> const vk::Pipeline&;
+
+    [[nodiscard]] auto GetPipelineLayout() const -> const vk::PipelineLayout&;
 
 private:
     void InitializeShaderStage( const std::string& vertFile, const std::string& fragFile );
@@ -30,8 +30,10 @@ private:
 
     [[nodiscard]] auto CreateShaderModule( const std::string& file ) -> vk::ShaderModule;
 
-    std::vector<vk::ShaderModule> _shaderModules {};
-    std::vector<vk::PipelineShaderStageCreateInfo> _shaderInfos {};
+    vk::PipelineLayout _pipelineLayout;
+    vk::Pipeline _pipeline;
+    std::vector<vk::ShaderModule> _shaderModules;
+    std::vector<vk::PipelineShaderStageCreateInfo> _shaderInfos;
     vk::PipelineVertexInputStateCreateInfo _vertexInputInfo {};
     vk::PipelineInputAssemblyStateCreateInfo _inputAssemblyInfo {};
     vk::PipelineViewportStateCreateInfo _viewportInfo {};

@@ -2,7 +2,6 @@
 #define WINDENGINE_VULKANDEVICE_HPP
 
 #include "defines.hpp"
-#include <map>
 #include <vulkan/vulkan.hpp>
 
 namespace WindEngine::Core::Render
@@ -30,9 +29,9 @@ struct PhysicalDeviceInfo
 
 struct SwapchainSupportInfo
 {
-    std::vector<vk::PresentModeKHR> presentModes {};
+    std::vector<vk::PresentModeKHR> presentModes;
     vk::SurfaceCapabilitiesKHR surfaceCapabilities {};
-    std::vector<vk::SurfaceFormatKHR> surfaceFormats {};
+    std::vector<vk::SurfaceFormatKHR> surfaceFormats;
 };
 
 struct VulkanDevice

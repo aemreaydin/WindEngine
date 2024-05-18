@@ -24,21 +24,21 @@ void VulkanPipeline::Initialize( const vk::RenderPass& renderPass )
     InitializeDynamicState();
 
     const auto layoutInfo = vk::PipelineLayoutCreateInfo {};
-    pipelineLayout = _device->device.createPipelineLayout( layoutInfo, _allocator );
+    _pipelineLayout = _device->device.createPipelineLayout( layoutInfo, _allocator );
 
     const auto pipelineInfo = vk::GraphicsPipelineCreateInfo {
         .stageCount = ToU32( _shaderInfos.size() ),
         .pStages = _shaderInfos.data(),
         .pVertexInputState = &_vertexInputInfo,
         .pInputAssemblyState = &_inputAssemblyInfo,
-        .pTessellationState = nullptr,  // TODO Add functionality for tesselation
+        .pTessellationState = nullptr,  // TODO(emreaydn): Add functionality for tesselation
         .pViewportState = &_viewportInfo,
         .pRasterizationState = &_rasterizationInfo,
         .pMultisampleState = &_multisampleInfo,
         .pDepthStencilState = &_depthStencilInfo,
         .pColorBlendState = &_colorBlendInfo,
         .pDynamicState = &_dynamicInfo,
-        .layout = pipelineLayout,
+        .layout = _pipelineLayout,
         .renderPass = renderPass,
         .subpass = 0,
     };
@@ -47,7 +47,7 @@ void VulkanPipeline::Initialize( const vk::RenderPass& renderPass )
     {
         WindFatal( "Failed to create the pipeline." );
     }
-    pipeline = graphicsPipeline;
+    _pipeline = graphicsPipeline;
 }
 
 void VulkanPipeline::Destroy()
@@ -56,8 +56,8 @@ void VulkanPipeline::Destroy()
     {
         _device->device.destroy( module );
     }
-    _device->device.destroy( pipelineLayout, _allocator );
-    _device->device.destroy( pipeline, _allocator );
+    _device->device.destroy( _pipelineLayout, _allocator );
+    _device->device.destroy( _pipeline, _allocator );
 }
 
 void VulkanPipeline::InitializeShaderStage( const std::string& vertFile, const std::string& fragFile )
@@ -153,7 +153,7 @@ void VulkanPipeline::InitializeColorBlendState()
                                               .colorWriteMask =
                                                 vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
                                                 vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA };
-    const auto blendConstants = std::array<float, 4> { 0.0F, 0.0F, 0.0F, 0.0F };  // TODO: Try this
+    const auto blendConstants = std::array<float, 4> { 0.0F, 0.0F, 0.0F, 0.0F };  // TODO(emreaydn): Try this
     _colorBlendInfo = { .logicOpEnable = VK_FALSE,
                         .logicOp = vk::LogicOp::eCopy,
                         .attachmentCount = 1,
@@ -173,6 +173,16 @@ auto VulkanPipeline::CreateShaderModule( const std::string& file ) -> vk::Shader
     const auto shaderCode = G_READ_SHADER_FROM_FILE<U32>( file );
     const auto shaderInfo = vk::ShaderModuleCreateInfo { .codeSize = shaderCode.size(), .pCode = shaderCode.data() };
     return _device->device.createShaderModule( shaderInfo, _allocator );
+}
+
+auto VulkanPipeline::GetPipeline() const -> const vk::Pipeline&
+{
+    return _pipeline;
+}
+
+auto VulkanPipeline::GetPipelineLayout() const -> const vk::PipelineLayout&
+{
+    return _pipelineLayout;
 }
 
 }  // namespace WindEngine::Core::Render

@@ -82,16 +82,11 @@ void VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
         imageCount = surfaceCapabilities.maxImageCount;
     }
 
-    for ( const auto& format : formats )
-    {
-        if ( format.format == vk::Format::eR8G8B8A8Unorm &&
-             format.colorSpace == vk::ColorSpaceKHR::eVkColorspaceSrgbNonlinear )
-        {
-            imageFormat = format;
-            break;
-        }
-    }
-    if ( imageFormat.format == vk::Format::eUndefined )
+    auto imageFormatIter = std::ranges::find_if( formats, []( const auto& format ) {
+        return format.format == vk::Format::eR8G8B8A8Unorm &&
+               format.colorSpace == vk::ColorSpaceKHR::eVkColorspaceSrgbNonlinear;
+    } );
+    if ( imageFormatIter == formats.end() )
     {
         imageFormat = formats[0];
     }
@@ -119,13 +114,11 @@ void VulkanSwapchain::Create( const vk::SurfaceKHR& surface, U32 width, U32 heig
     }
 
     auto presentMode = vk::PresentModeKHR::eFifo;
-    for ( const auto& mode : presentModes )
+    auto presentModeIter = std::ranges::find_if(
+      presentModes, []( const auto& presentMode ) { return presentMode == vk::PresentModeKHR::eMailbox; } );
+    if ( presentModeIter != presentModes.end() )
     {
-        if ( mode == vk::PresentModeKHR::eMailbox )
-        {
-            presentMode = mode;
-            break;
-        }
+        presentMode = *presentModeIter;
     }
 
     const auto swapchainInfo = vk::SwapchainCreateInfoKHR {

@@ -42,9 +42,9 @@ void Window::PollEvents( AppState& appState )
             }
             break;
         }
+        default:
+            break;
         }
-
-        break;
     }
 }
 
@@ -61,6 +61,8 @@ void Window::OnKeyPress( AppState& appState ) const
         break;
     case SDLK_F2:
         appState.isFrameRateFixed = !appState.isFrameRateFixed;
+        break;
+    default:
         break;
     }
 }
@@ -80,6 +82,8 @@ void Window::OnButtonPress( [[maybe_unused]] AppState& appState ) const
     case SDL_BUTTON_RIGHT:
         WindTrace( "Right Mouse Button Pressed." );
         break;
+    default:
+        break;
     }
 }
 
@@ -92,6 +96,8 @@ void Window::OnButtonRelease( [[maybe_unused]] AppState& appState ) const
         break;
     case SDL_BUTTON_RIGHT:
         WindTrace( "Right Mouse Button Released." );
+        break;
+    default:
         break;
     }
 }

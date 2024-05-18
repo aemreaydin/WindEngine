@@ -9,10 +9,23 @@
 // constexpr auto kIncludeValidation = true;
 // #endif
 
-static auto VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                   VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-                                                   const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                   [[maybe_unused]] void* pUserData ) -> VkBool32
+namespace WindEngine::Core::Render
+{
+
+void AddRequestedExtension( const char* requestedExtensionName, std::vector<const char*>& enabledExtensionNames )
+{
+    if ( vk::isInstanceExtension( requestedExtensionName ) )
+    {
+        enabledExtensionNames.push_back( requestedExtensionName );
+        return;
+    }
+    WindWarn( "Failed to find extension {}.", requestedExtensionName );
+}
+
+auto VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                            VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                            const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                            [[maybe_unused]] void* pUserData ) -> VkBool32
 {
     const auto* type = std::invoke( [&]() {
         switch ( messageTypes )
@@ -49,19 +62,6 @@ static auto VKAPI_PTR DebugUtilsMessengerCallback( VkDebugUtilsMessageSeverityFl
         break;
     }
     return VK_FALSE;
-}
-
-namespace WindEngine::Core::Render
-{
-
-static void AddRequestedExtension( const char* requestedExtensionName, std::vector<const char*>& enabledExtensionNames )
-{
-    if ( vk::isInstanceExtension( requestedExtensionName ) )
-    {
-        enabledExtensionNames.push_back( requestedExtensionName );
-        return;
-    }
-    WindWarn( "Failed to find extension {}.", requestedExtensionName );
 }
 
 void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window, vk::AllocationCallbacks* allocator )
@@ -101,7 +101,7 @@ void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window
                                  vk::DebugUtilsMessageTypeFlagBitsEXT::eDeviceAddressBinding,
                   .pfnUserCallback = &DebugUtilsMessengerCallback };
 
-    void* pNext = static_cast<vk::DebugUtilsMessengerCreateInfoEXT*>( &debugInfo );
+    void* pNext = &debugInfo;
 #else
     void* pNext { nullptr };
 #endif
@@ -123,7 +123,7 @@ void VulkanInstance::Initialize( const char* applicationName, SDL_Window* window
 #endif
 }
 
-void VulkanInstance::Destroy( vk::AllocationCallbacks* allocator )
+void VulkanInstance::Destroy( vk::AllocationCallbacks* allocator ) const
 {
 #if defined( _DBG )
     instance.destroyDebugUtilsMessengerEXT( debugMessenger );

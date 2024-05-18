@@ -36,9 +36,9 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
 
     swapchain.Initialize( surface, framebufferWidth, framebufferHeight );
     renderPass.Initialize( swapchain.imageFormat.format, device.depthFormat );
-    graphicsPipeline.Initialize( renderPass.mainRenderPass );
+    graphicsPipeline.Initialize( renderPass.GetRenderPass() );
 
-    // TODO? Abstract away
+    // TODO(emreaydn): ? Abstract away
     // Command pool and command buffers
     const auto poolInfo = vk::CommandPoolCreateInfo {
         .flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
@@ -54,7 +54,7 @@ auto VulkanContext::Initialize( const char* applicationName, U32 width, U32 heig
 
     RecreateFramebuffers( width, height );
 
-    // TODO Move from here
+    // TODO(emreaydn): Move from here
     for ( auto& frame : frames )
     {
         const auto fenceInfo = vk::FenceCreateInfo {
@@ -80,19 +80,19 @@ void VulkanContext::Shutdown()
 
     triangleBuffer.Destroy();
 
-    for ( auto& frame : frames )
+    for ( const auto& frame : frames )
     {
         GetDevice().destroy( frame.renderSemaphore, allocator );
         GetDevice().destroy( frame.presentSemaphore, allocator );
         GetDevice().destroy( frame.fence, allocator );
     }
 
-    for ( auto& buffer : framebuffers )
+    for ( const auto& buffer : framebuffers )
     {
         GetDevice().destroy( buffer, allocator );
     }
 
-    for ( auto& buffer : graphicsCommandBuffers )
+    for ( const auto& buffer : graphicsCommandBuffers )
     {
         buffer.Free( GetDevice(), graphicsCommandPool );
     }
@@ -144,7 +144,7 @@ void VulkanContext::RecreateFramebuffers( U32 width, U32 height )
     for ( size_t ind = 0; ind < framebuffers.size(); ++ind )
     {
         auto attachments = std::vector<vk::ImageView> { swapchain.imageViews[ind], swapchain.depthImage.imageView };
-        const auto framebufferInfo = vk::FramebufferCreateInfo { .renderPass = renderPass.mainRenderPass,
+        const auto framebufferInfo = vk::FramebufferCreateInfo { .renderPass = renderPass.GetRenderPass(),
                                                                  .attachmentCount = ToU32( attachments.size() ),
                                                                  .pAttachments = attachments.data(),
                                                                  .width = framebufferWidth,

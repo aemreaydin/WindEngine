@@ -1,5 +1,4 @@
 #include "vulkanRenderer.hpp"
-#include "vulkanInstance.hpp"
 #include <SDL_vulkan.h>
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -79,7 +78,7 @@ auto VulkanRenderer::BeginFrame( AppState& state ) -> bool
     const vk::ClearColorValue colorValue { .float32 = { { 0.0F, 0.5F, 0.0F, 1.0F } } };
     const vk::ClearDepthStencilValue depthStencilValue { .depth = 1.F, .stencil = 0 };
     _context.renderPass.BeginRenderPass( cmd.commandBuffer, framebuffer, rect2D, colorValue, depthStencilValue );
-    cmd.commandBuffer.bindPipeline( vk::PipelineBindPoint::eGraphics, _context.graphicsPipeline.pipeline );
+    cmd.commandBuffer.bindPipeline( vk::PipelineBindPoint::eGraphics, _context.graphicsPipeline.GetPipeline() );
 
     return true;
 }
@@ -93,7 +92,7 @@ auto VulkanRenderer::EndFrame( [[maybe_unused]] AppState& state ) -> bool
     cmd.commandBuffer.bindVertexBuffers( 0, _context.triangleBuffer.buffer, { 0 } );
     cmd.commandBuffer.draw( ToU32( 3 ), 1, 0, 0 );
 
-    _context.renderPass.EndRenderPass( cmd.commandBuffer );
+    _context.renderPass.EndRenderPass();
     cmd.End();
 
     const auto dstStageMask = std::vector<vk::PipelineStageFlags> { vk::PipelineStageFlagBits::eColorAttachmentOutput };

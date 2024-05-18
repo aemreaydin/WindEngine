@@ -3,6 +3,10 @@ project(WindEngine VERSION 0.0.1 DESCRIPTION "A Graphics Engine" LANGUAGES CXX)
 
 SET(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+# set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+set(CMAKE_CXX_CPPCHECK "cppcheck" --check-level=exhaustive --quiet --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction)
+# set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "include-what-you-use")
 
 find_package(Vulkan REQUIRED)
 find_package(spdlog CONFIG REQUIRED)

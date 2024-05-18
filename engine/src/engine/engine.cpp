@@ -12,7 +12,7 @@ using namespace WindEngine::Core;
 using namespace WindEngine::Core::Memory;
 using namespace WindEngine::Core::Render;
 
-static auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
+auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
 {
     switch ( type )
     {
@@ -22,6 +22,7 @@ static auto CreateRenderer( RendererTypes type ) -> std::unique_ptr<Renderer>
         WindError( "DIRECTX renderer not implemented." );
         return nullptr;
     }
+    WindFatal( "Unknown renderer" );
 }
 
 Engine::Engine( std::unique_ptr<App> app )
