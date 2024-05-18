@@ -4,6 +4,7 @@
 
 # Cache files
 .xmake/
+.task/
 
 # Build files
 build*

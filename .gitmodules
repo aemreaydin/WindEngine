@@ -1,6 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg.git
-[submodule "engine/math"]
-	path = engine/math
+[submodule "mirage-math"]
+	path = mirage-math
 	url = https://github.com/aemreaydin/mirage-math.git

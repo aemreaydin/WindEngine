@@ -33,7 +33,8 @@ struct Frame
     vk::Fence fence;
 };
 
-constexpr U32 kFramesInFlight = 2;  // TODO(emreaydn): Configurable?
+// TODO(emreaydn): Configurable?
+constexpr U32 kFramesInFlight = 2;
 
 struct VulkanContext
 {

@@ -1,1 +1,12 @@
-add_subdirectory(engine)
+function(add_subdirectories_recursive_glob target directory)
+  file(GLOB_RECURSE SUBDIRS LIST_DIRECTORIES TRUE ${directory} "${directory}/*")
+    foreach(subdir ${SUBDIRS})
+        if(IS_DIRECTORY ${subdir})
+            MESSAGE(STATUS "Adding ${subdir} to target includes.")
+            get_filename_component(subdir_name ${subdir} NAME) 
+            target_include_directories(${target} PUBLIC ${subdir})
+        endif()
+    endforeach()
+endfunction()
+
+add_subdirectories_recursive_glob(WindVulkan ${CMAKE_CURRENT_SOURCE_DIR})

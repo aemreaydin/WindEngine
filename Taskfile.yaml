@@ -5,12 +5,18 @@ tasks:
       - cmake -GNinja -S "{{.USER_WORKING_DIR}}" -B "{{.USER_WORKING_DIR}}/build/Debug" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_TOOLCHAIN_FILE="{{.VCPKG_DIR}}"
     vars:
       VCPKG_DIR: "{{.USER_WORKING_DIR}}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    sources:
+      - ./**/CMakeLists.txt
+    generates:
+      - build/**/*
   build:
+    deps: [generate]
     cmds:
       - cmake --build build/Debug --target all | tee build/Debug/report.txt
     sources:
       # TODO: Make it so that it takes .h, .hpp, .cpp
       - engine/**/*.*pp
+      - ./**/CMakeLists.txt
     generates:
       - build/**/*
   build_shaders:
@@ -25,7 +31,7 @@ tasks:
   run:
     deps: [build, build_shaders]
     cmds:
-      - ./build/Debug/editor/TEST
+      - ./build/Debug/test/WindTest
   test:
     deps: [build, build_shaders]
     cmds:

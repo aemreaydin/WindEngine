@@ -12,22 +12,18 @@ SET(COMPILE_DEFINITIONS
         $<$<CONFIG:Debug>:_DBG>
         $<$<CONFIG:RelWithDebInfo>:_DBG>
         $<$<CONFIG:Release>:_REL>
-        $<$<CONFIG:MinSizeRel>:_REL>)
+        $<$<CONFIG:MinSizeRel>:_REL>
+        GLM_FORCE_RADIANS 
+        GLM_FORCE_DEPTH_ZERO_TO_ONE)
 
-
-add_library(WindVulkan  ${Wind_Engine_Src})
+file(GLOB_RECURSE WIND_ENGINE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src "*.cpp")
+add_library(WindVulkan ${WIND_ENGINE_SRC})
 target_link_libraries(WindVulkan PUBLIC ${THIRD_PARTY_LIBS})
-target_include_directories(WindVulkan PUBLIC math/include)
+target_include_directories(WindVulkan PUBLIC ../mirage-math/include)
 if (APPLE)
-    LIST(APPEND COMPILE_DEFINITIONS VK_USE_PLATFORM_MACOS_MVK GLM_FORCE_RADIANS GLM_FORCE_DEPTH_ZERO_TO_ONE)
+    LIST(APPEND COMPILE_DEFINITIONS VK_USE_PLATFORM_MACOS_MVK )
 endif ()
 target_compile_definitions(WindVulkan PUBLIC ${COMPILE_DEFINITIONS})
-target_compile_features(WindVulkan PRIVATE cxx_std_20)
 set_target_properties(WindVulkan PROPERTIES CXX_EXTENSIONS OFF)
-# TODO
-#target_compile_options(WindVulkan PUBLIC -Wall -Wextra -pedantic)
-
-# TODO
-#target_precompile_headers(WindVulkan PUBLIC include/pch.hpp)
 
 add_subdirectory(src)
